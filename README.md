@@ -1,1 +1,3 @@
-# Application_web
+ÉQUIPE: 
+Noah LADOUCEUR
+Raoul GOMET
