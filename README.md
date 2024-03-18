@@ -1,4 +1,4 @@
-#ÉQUIPE : 
+ÉQUIPE : 
 
 Noah LADOUCEUR 
 Raoul GOMBET
