@@ -1,3 +1,3 @@
 ÉQUIPE: 
-Noah LADOUCEUR
+Noah LADOUCEUR &
 Raoul GOMET
