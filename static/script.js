@@ -1,5 +1,5 @@
 // Fonction pour effectuer une requête AJAX vers l'API
-function fetchGenre() {
+function fetchGenres() {
     fetch('urlAPI_pour_laPage')
         .then(response => response.json())
         .then(data => {
@@ -26,6 +26,6 @@ function displayGenres(genres) {
 }
 
 // Appeler la fonction pour récupérer les genres lors du chargement de la page
-window.onload = fetchGenre;
+window.onload = fetchGenres;
 
 //Faire la même pour les autres pages... Home , Developers , Platforms 
