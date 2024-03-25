@@ -1,10 +1,10 @@
 #search-bar{
-    margin-left: 20vw;
+    margin-left: 5vw;
     display: flex;
     align-items: center;
 }
 #search-bar{
-    font-size: 30px;
+    font-size: 25px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 h1{
@@ -14,4 +14,10 @@ h1{
 }
 body{
     background-color: #151515 ;
+}
+#search-bar input{
+    margin-left: 20px ;
+    height: 25px;
+    width: 150px;
+    border-radius: 8px;
 }
