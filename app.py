@@ -5,9 +5,12 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
-@app.route("/login")
-def login():
-    return render_template("login.html")
+from static.auth import auth
+from static.views import views
+from static.server import server
+app.register_blueprint(auth , url_prefix='/')
+app.register_blueprint(views , url_prefix='/')
+app.register_blueprint(server , url_prefix='/')
 
 
 if __name__ == '__main__':
