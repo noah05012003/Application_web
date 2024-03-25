@@ -1,1 +1,1 @@
-
+alert('Bonjour')
