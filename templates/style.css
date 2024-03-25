@@ -1,0 +1,17 @@
+#search-bar{
+    margin-left: 20vw;
+    display: flex;
+    align-items: center;
+}
+#search-bar{
+    font-size: 30px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+h1{
+    color: antiquewhite;
+    padding: 5px 8px 5px 8px;
+    border-radius: 5px;
+}
+body{
+    background-color: #151515 ;
+}
