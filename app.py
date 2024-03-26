@@ -1,13 +1,15 @@
 from flask import Flask , render_template
+from static.auth import auth
+from static.views import views
+from static.server import server
+
 app = Flask(__name__)
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
-from static.auth import auth
-from static.views import views
-from static.server import server
+
 app.register_blueprint(auth , url_prefix='/')
 app.register_blueprint(views , url_prefix='/')
 app.register_blueprint(server , url_prefix='/')
