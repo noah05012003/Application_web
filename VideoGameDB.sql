@@ -54,8 +54,8 @@ CREATE TABLE Reviews (
 );
 
 
-CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id)
-CREATE UNIQUE INDEX idx_best_game ON Games(game_rating,game_name) USING {BTREE}; -- Index pour obtenir rapidement les meilleurs jeux 
+CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id);
+CREATE UNIQUE INDEX idx_best_game ON Games(game_rating DESC,game_name) USING {BTREE}; -- Index pour obtenir rapidement les meilleurs jeux 
 
 
 CREATE TABLE Following (
