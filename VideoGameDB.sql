@@ -6,42 +6,39 @@ USE video_game;
 
 CREATE TABLE Platforms (
   platform_id INTEGER PRIMARY KEY,
-  platform_slug VARCHAR(50) UNIQUE NOT NULL,
-  platform_name VARCHAR(100) NOT NULL,
-  description TEXT,
+  platform_slug VARCHAR(255) CONSTRAINT check_slug_format CHECK (platform_slug LIKE '%[-a-zA-Z0-9_]%') UNIQUE NOT NULL,
+  platform_name VARCHAR(100) UNIQUE NOT NULL,
+  description TEXT NOT NULL,
   platform_year INTEGER,
-  platform_image VARCHAR(255)
+  platform_image VARCHAR(255) CONSTRAINT check_uri_format CHECK (platform_image ~ '^https?://.*'),
 );
 
 
 CREATE TABLE Genres (
   genre_id INTEGER PRIMARY KEY,
-  genre_slug VARCHAR(50) UNIQUE NOT NULL,
-  genre_name VARCHAR(100) NOT NULL,
-  description TEXT,
-  genre_image VARCHAR(255)
+  genre_slug VARCHAR(255) CONSTRAINT check_slug_format CHECK (genre_slug LIKE '%[-a-zA-Z0-9_]%') UNIQUE NOT NULL,
+  genre_name VARCHAR(100) UNIQUE NOT NULL,
+  description TEXT NOT NULL,
+  genre_image VARCHAR(255) CONSTRAINT check_uri_format CHECK (genre_image ~ '^https?://.*'),
 );
 
 
 CREATE TABLE Games (
   game_id INTEGER PRIMARY KEY,
-  game_slug VARCHAR(50) UNIQUE NOT NULL,
+  game_slug VARCHAR(255) CONSTRAINT check_slug_format CHECK (game_slug LIKE '%[-a-zA-Z0-9_]%') UNIQUE NOT NULL,
   game_name VARCHAR(100) NOT NULL,
   description TEXT,
-  game_rating DECIMAL(3, 1), -- Assuming rating is a decimal value
-  game_image VARCHAR(255),
-  prix DECIMAL(10, 2), -- Assuming price is stored as decimal
-  platform_id INTEGER REFERENCES Platforms(platform_id),
-  genre_id INTEGER,
-  CONSTRAINT fk_games_genre FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) -- Reference to Genres table
+  game_rating DECIMAL(3, 1) CHECK (game_rating BETWEEN 0 AND 10), -- Assuming rating is a decimal value
+  game_image VARCHAR(255) CONSTRAINT check_uri_format CHECK (game_image ~ '^https?://.*'),
+  --platform_id INTEGER REFERENCES Platforms(platform_id),
 );
 
 
 CREATE TABLE Users (
-  user_id INTEGER PRIMARY KEY,
-  username VARCHAR(100) UNIQUE NOT NULL,
-  user_email VARCHAR(255) UNIQUE NOT NULL CHECK (user_email LIKE '%@gmail.com'),
-  user_password VARCHAR(255) NOT NULL -- Storing hashed passwords for security
+  user_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  user_name VARCHAR(100) NOT NULL UNIQUE,
+  user_email VARCHAR(255)  CHECK (user_email LIKE '%@gmail.com') NOT NULL UNIQUE,
+  user_password VARCHAR(255) CONSTRAINT check_password_length CHECK (LENGTH(user_password) >= 8) NOT NULL , -- Storing hashed passwords for security
 );
 
 
@@ -49,11 +46,11 @@ CREATE TABLE Reviews (
   review_id INTEGER PRIMARY KEY,
   game_id INTEGER, 
   user_id INTEGER,
-  comment TEXT,
-  date_posted TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  game_rating DECIMAL(3, 1), -- Allow users to rate the game
-  CONSTRAINT fk_review_game FOREIGN KEY (game_id) REFERENCES Games(game_id),
-  CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  comment TEXT NOT NULL,
+  date_posted DATETIME DEFAULT CURRENT_TIMESTAMP,
+  review_rating DECIMAL(3, 1) CHECK( review_rating BEETWEEN 0 AND 10), -- Allow users to rate the game
+  FOREIGN KEY (game_id) REFERENCES Games(game_id) ON DELETE CASCADE ON UPDATE NO ACTION,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
 );
 
 
@@ -61,24 +58,24 @@ CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id);
 
 
 CREATE TABLE Following (
-  follower_id INTEGER,
   user_id INTEGER,
-  game_id INTEGER,
-  date_followed DATE,
-  PRIMARY KEY (follower_id),
-  FOREIGN KEY (follower_id) REFERENCES Users(user_id)
+  genre_id INTEGER,
+  platform_id INTEGER,
+  date_followed DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id,genre_id,platform_id),
+  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
+  FOREIGN KEY (genre_id) REFERENCES Genres (genre_id)  ON DELETE CASCADE ON UPDATE NO ACTION,
+  FOREIGN KEY (platform_id) REFERENCES Platforms (platform_id) ON DELETE CASCADE ON UPDATE NO ACTION,
 );
 
 
 CREATE TABLE Library (
   user_id INTEGER,
   game_id INTEGER,
-  platform_id INTEGER,
-  date_added DATE,
+  date_added DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, game_id), -- Composite primary key
-  CONSTRAINT fk_library_user FOREIGN KEY (user_id) REFERENCES Users(user_id),
-  CONSTRAINT fk_library_game FOREIGN KEY (game_id) REFERENCES Games(game_id),
-  CONSTRAINT fk_library_platform FOREIGN KEY (platform_id) REFERENCES Platforms(platform_id),
-  CONSTRAINT fk_library_reviews FOREIGN KEY (user_id, game_id) REFERENCES Reviews(user_id, game_id)
+  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
+  FOREIGN KEY (game_id) REFERENCES Games(game_id) ON DELETE CASCADE ON UPDATE NO ACTION,
 );
     
+-- "J'ai apporté queqlque correction mais sinon c'est good"
