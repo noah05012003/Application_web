@@ -54,7 +54,8 @@ CREATE TABLE Reviews (
 );
 
 
-CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id);
+CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id)
+CREATE INDEX idx_best_game ON Games(game_rating,game_name); -- Index pour obtenir rapidement les meilleurs jeux 
 
 
 CREATE TABLE Following (
@@ -79,3 +80,10 @@ CREATE TABLE Library (
 );
     
 -- "J'ai apporté queqlque correction mais sinon c'est good"
+-- Creer des Routines pour les fonctionnalités suivante : 
+la création d’un compte pour l’utilisateur ou supprimer l’utilisateur 
+Ajout/Supprimer un  jeux à notre wishlist 
+Suivre un genre , un développeur ou une platformers ( Ajout à la liste de following )
+Ajout/Modifier/Supprimer une review 
+Mettre une note à un jeu 
+Modifier les informations de l’utilisateur
