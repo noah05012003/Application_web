@@ -8,6 +8,7 @@ CREATE TABLE Platforms (
   platform_id INTEGER PRIMARY KEY,
   platform_slug VARCHAR(255) CONSTRAINT check_slug_format CHECK (platform_slug LIKE '%[-a-zA-Z0-9_]%') UNIQUE NOT NULL,
   platform_name VARCHAR(100) UNIQUE NOT NULL,
+  platform_game_count INTEGER NOT NULL,
   description TEXT NOT NULL,
   platform_year INTEGER,
   platform_image VARCHAR(255) CONSTRAINT check_uri_format CHECK (platform_image ~ '^https?://.*'),
@@ -18,6 +19,7 @@ CREATE TABLE Genres (
   genre_id INTEGER PRIMARY KEY,
   genre_slug VARCHAR(255) CONSTRAINT check_slug_format CHECK (genre_slug LIKE '%[-a-zA-Z0-9_]%') UNIQUE NOT NULL,
   genre_name VARCHAR(100) UNIQUE NOT NULL,
+  genre_game_count INTEGER NOT NULL,
   description TEXT NOT NULL,
   genre_image VARCHAR(255) CONSTRAINT check_uri_format CHECK (genre_image ~ '^https?://.*'),
 );
@@ -54,9 +56,6 @@ CREATE TABLE Reviews (
 );
 
 
-CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id);
-CREATE UNIQUE INDEX idx_best_game ON Games(game_rating DESC,game_name) USING {BTREE}; -- Index pour obtenir rapidement les meilleurs jeux 
-
 
 CREATE TABLE Following (
   user_id INTEGER,
@@ -78,6 +77,13 @@ CREATE TABLE Library (
   FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
   FOREIGN KEY (game_id) REFERENCES Games(game_id) ON DELETE CASCADE ON UPDATE NO ACTION,
 );
+
+--Indexation
+CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id) USING {BTREE};
+CREATE UNIQUE INDEX idx_best_game ON Games(game_rating DESC,game_name) USING {BTREE}; -- Index pour obtenir rapidement les meilleurs jeux 
+CREATE UNIQUE INDEX idx_genre_with_most_game ON Genres (genre_game_count DESC,genre_name) USING {BTREE};
+CREATE UNIQUE INDEX idx_platform_with_most_game ON Platforms (platform_game_count DESC,plaform_name) USING {BTREE};
+
     
 -- "J'ai apporté queqlque correction mais sinon c'est good"
 -- Creer des Routines pour les fonctionnalités suivante : 
