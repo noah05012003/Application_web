@@ -53,7 +53,7 @@ CREATE TABLE Users (
 
 
 CREATE TABLE Reviews (
-  review_id INTEGER PRIMARY KEY,
+  review_id INTEGER AUTO_INCREMENT PRIMARY KEY,
   game_id INTEGER, 
   user_id INTEGER,
   comment TEXT NOT NULL,
