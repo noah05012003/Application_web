@@ -22,7 +22,7 @@ def login():
         passeVrai = cursor.fetchone()
         if (passeVrai != None) and (Password == passeVrai[0]):
             cursor.execute(f"SELECT * FROM Users WHERE user_mail = {Email};")
-            info_user = cursor.fetchall()
+            info_user = cursor.fetchone()
         
             global ProfileUser 
             ProfileUser["Username"] = info_user[1]
