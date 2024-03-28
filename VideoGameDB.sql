@@ -39,7 +39,7 @@ CREATE TABLE Games (
 CREATE TABLE Users (
   user_id INTEGER AUTO_INCREMENT PRIMARY KEY,
   user_name VARCHAR(100) NOT NULL UNIQUE,
-  user_email VARCHAR(255)  CHECK (user_email LIKE '%@gmail.com') NOT NULL UNIQUE,
+  user_mail VARCHAR(255)  CHECK (user_mail LIKE '%@gmail.com') NOT NULL UNIQUE,
   user_password VARCHAR(255) CONSTRAINT check_password_length CHECK (LENGTH(user_password) >= 8) NOT NULL , -- Storing hashed passwords for security
 );
 
