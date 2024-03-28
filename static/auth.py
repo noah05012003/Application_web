@@ -1,7 +1,7 @@
 from flask import Blueprint , render_template , request , flash
 from static.server import create_account
 import mysql.connector
-
+from flask_bcrypt import  check_password_hash
 
 
 
@@ -22,11 +22,11 @@ def login_user():
     if request.method == 'POST':
         Email = request.form.get("Email") #Obtenir les données du form 
         Password = request.form.get("Password")
-        cursor.execute(f"SELECT user_password FROM Users WHERE user_mail = {Email};")
-        passeVrai = cursor.fetchone()
-        if (passeVrai != None) and (Password == passeVrai[0]):
-            cursor.execute(f"SELECT * FROM Users WHERE user_mail = {Email};")
-            info_user = cursor.fetchone()
+        cursor.execute("SELECT user_password FROM Users WHERE user_mail = %s;",(Email,))
+        password_hashed = cursor.fetchone() #Récupération du mot de passe chiffré 
+        if (password_hashed != None) and check_password_hash(password_hashed[0],Password): 
+            cursor.execute("SELECT * FROM Users WHERE user_mail = %s;",(Email,))
+            info_user = cursor.fetchall()
         
             global ProfileUser 
             ProfileUser["Username"] = info_user[1]
