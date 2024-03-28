@@ -18,6 +18,9 @@ from faker import Faker
 from datetime import date
 #%%  Connection creation function
 
+#NB : Pour notre application  On doit peupler les tables de données (Genres , Games , platforms avec l'API ) mais les autres tables se peuplent par les actions de l'utilisateur , la table users se remplie avec la création d'un compte par un utilisateur voilà pourquoi à une page 
+#login et signUp ainsi qu'une fonction python qui ajoute l'utilisateur à la base de donnée ( à l'aide d'une routine surement)
+
 def create_connection(host_name, user_name, user_password, db_name, db_port):
    
     connection = None
@@ -153,3 +156,4 @@ execute_query(connection, clear_query)
 for i in range(taille_table_utilisateur):
     insert_utilisateur(int(user_id[i]),Username_list[i],Usermail_list[i],Password_list[i])
 #Connexion à la base de donnée
+

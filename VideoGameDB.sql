@@ -28,7 +28,7 @@ CREATE TABLE Genres (
   CONSTRAINT check_genre_slug_format CHECK (genre_slug REGEXP '[-a-zA-Z0-9_]+'),
   CONSTRAINT check_genre_uri_format CHECK (genre_image REGEXP '^https?://.*')
 );
-DROP TABLE Genres;
+
 
 
 CREATE TABLE Games (
