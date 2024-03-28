@@ -106,3 +106,23 @@ Suivre un genre , un développeur ou une platformers ( Ajout à la liste de foll
 Ajout/Modifier/Supprimer une review 
 Mettre une note à un jeu 
 Modifier les informations de l’utilisateur
+
+--Un conseil moi perso j'aurai utilisé des procédures ou fonctions pour tout ce qui est ajouter
+-- pour le rester supprimer/modifier j'aurai utilisé des triggers 
+--Exemple avec un trigger pour supprimer la review d'un user  supprimé
+
+DELIMITER //
+
+CREATE TRIGGER delete_review_old_user
+AFTER DELETE ON Users 
+FOR EACH ROW
+BEGIN
+    UPDATE Reviews 
+    SET comment = NULL, 
+        review_rating = NULL
+    WHERE user_id = OLD.user_id;
+END;
+//
+
+DELIMITER ;
+

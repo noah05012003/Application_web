@@ -30,7 +30,7 @@ def login_user():
         
             global ProfileUser 
             ProfileUser["Username"] = info_user[1]
-            ProfileUser["Email"] = info_user[2]
+            ProfileUser["Email"] = Email
             return render_template ("home.html" , profile = ProfileUser) #Rajouter profile dans home.html 
         else :
             flash("L'Email ou le mot de passe sont incorrects",category='error')
