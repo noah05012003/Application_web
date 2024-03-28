@@ -79,7 +79,10 @@ CREATE TABLE Library (
 );
 
 --Indexation
-CREATE INDEX idx_reviews_user_game ON Reviews(user_id, game_id) USING {BTREE};
+CREATE UNIQUE INDEX idx_reviews_user_game ON Reviews(game_id, user_id,comment) USING {BTREE}; --index pour trouver facilement la review d'un user 
+CREATE UNIQUE INDEX idx_users ON Users(user_id,user_name) USING {BTREE}; --index pour trouver facilement l'user à supprimer 
+CREATE UNIQUE INDEX idx_users_game_library ON Library(user_id,game_id) USING {BTREE}; --Index pour trouver facilement le jeux à retirer de la library
+CREATE UNIQUE INDEX idx_users_content_follow ON Following(user_id,genre_id,platform_id) USING {BTREE}; --index pour trouver facilement un genre ou une platforme à unfollow 
 CREATE UNIQUE INDEX idx_best_game ON Games(game_rating DESC,game_name) USING {BTREE}; -- Index pour obtenir rapidement les meilleurs jeux 
 CREATE UNIQUE INDEX idx_genre_with_most_game ON Genres (genre_game_count DESC,genre_name) USING {BTREE};
 CREATE UNIQUE INDEX idx_platform_with_most_game ON Platforms (platform_game_count DESC,plaform_name) USING {BTREE};
