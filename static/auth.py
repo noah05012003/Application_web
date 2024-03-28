@@ -13,8 +13,12 @@ cursor = cnx.cursor()
 auth = Blueprint('auth',__name__)
 ProfileUser = {}
 
-@auth.route('/login', methods = ['GET','POST']) #route vers la page html et fonction login
-def login():
+@auth.route('/login')
+def login_page():
+    return render_template("login.html")
+
+@auth.route('/login/users', methods = ['GET','POST']) #route vers la page html et fonction login
+def login_user():
     if request.method == 'POST':
         Email = request.form.get("Email") #Obtenir les données du form 
         Password = request.form.get("Password")
@@ -28,9 +32,11 @@ def login():
             ProfileUser["Username"] = info_user[1]
             ProfileUser["Email"] = info_user[2]
             return render_template ("home.html" , profile = ProfileUser) #Rajouter profile dans home.html 
+        else :
+            flash("L'Email ou le mot de passe sont incorrects",category='error')
+            return render_template("login.html") #Rajouter message dans login.html comme dans signUp.html
     
     
-    return render_template("login.html",message = "Informations Invalides !") #Rajouter message dans login.html comme dans signUp.html
 
 @auth.route('/signUp',methods = ['GET','POST']) #route vers la page sign Up et fonction sign Up
 def signUp():
