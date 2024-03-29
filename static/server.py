@@ -56,7 +56,7 @@ def delete_user():
         if result == 1:
             return jsonify({"message":"L'utilisateur à été bien été supprimé"}) , 201
         else:
-            return jsonify({"message":"L'Utilisateur n'a pas été supprimé ou n'existe pas "}), 404 ("Not found")
+            return jsonify({"message":"L'Utilisateur n'a pas été supprimé ou n'existe pas "}), 404 
         
     except  mysql.connector.Error as err:
         

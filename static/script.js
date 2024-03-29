@@ -30,4 +30,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<button id="deleteUserBtn">Supprimer l'utilisateur</button> // ajouter le bouton pour supprimer un user 
+

@@ -1,4 +1,4 @@
-from flask import Flask , render_template
+from flask import Flask , render_template 
 from static.auth import auth
 from static.views import views
 from static.server import server
@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'Ujojo'
 
 @app.route("/")
-def login():
+def home():
     return render_template("login.html")
 
 
