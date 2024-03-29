@@ -7,8 +7,8 @@ app = Flask(__name__)
 app.secret_key = 'Ujojo'
 
 @app.route("/")
-def home():
-    return render_template("home.html")
+def login():
+    return render_template("login.html")
 
 
 app.register_blueprint(auth , url_prefix='/')

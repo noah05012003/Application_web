@@ -1,4 +1,4 @@
-from flask import Blueprint , render_template
+from flask import Blueprint , render_template , session
 
 views = Blueprint('views',__name__)
 
@@ -18,12 +18,13 @@ def genre():
 def platforms():
     return render_template("platforms.html")
 
-@views.route('/login')
-def login():
-    return render_template("Login.html")
-
 @views.route('/signUp')
 def signUp():
     return render_template("signUp.html")
+
+@views.route('/home')
+def home():
+    return render_template("home.html", profile = session)
+
 
     

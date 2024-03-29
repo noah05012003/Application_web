@@ -28,7 +28,7 @@ def login_user():
                 
                 session['Username'] = info_user[1]
                 session['Email'] = Email
-                return render_template ("home;html" , profile = session)
+                return render_template ("home.html" , profile = session)
             else:
                 flash("L'Utilisateur n'existe pas ",category='error')
                 return render_template("login.html")
@@ -67,6 +67,6 @@ def signUp():
 @auth.route('/logout')
 def logout():
     session.clear()
-    return render_template ("home.html", profile = None)
+    return render_template ("login.html")
 
 

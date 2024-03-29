@@ -42,10 +42,12 @@ def create_account():
 
 
 
-@server.route(f"/user/delete/userID=<int:user_id>",methods=['POST','GET'])
-def delete_user(user_id):
+@server.route("/user/delete/",methods=['POST'])
+def delete_user():
 
     try:
+        
+        user_id = session.get("user_id") #Récupère l'id de l'user dans la session 
         sql_command = "CALL delete_user(%s);"
         cursor.execute(sql_command,(user_id,))
         result = cursor.fetchone()[0]
