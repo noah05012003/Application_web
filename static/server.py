@@ -1,4 +1,4 @@
-from flask import Blueprint , jsonify, request
+from flask import Blueprint , jsonify, request , render_template , session
 import mysql.connector
 from flask_bcrypt import generate_password_hash
 
@@ -22,7 +22,7 @@ def create_account():
         cnx.commit()
         
         if cursor.rowcount > 0:
-           return  jsonify({"message":"L'utilisateur à été bie été ajouté"}) , 201
+           return  jsonify({"message":"L'utilisateur à bien  été ajouté"}) , 201
         else:
             return jsonify({"message":"L'Utilisateur n'a pas été ajouté "}), 500
         
@@ -38,6 +38,37 @@ def create_account():
             cursor.close()
         if 'cnx' in locals():
             cnx.close()
+
+
+
+
+@server.route(f"/user/delete/userID=<int:user_id>",methods=['POST','GET'])
+def delete_user(user_id):
+
+    try:
+        sql_command = "CALL delete_user(%s);"
+        cursor.execute(sql_command,(user_id,))
+        result = cursor.fetchone()[0]
+        cnx.commit()
+        
+        if result == 1:
+            return jsonify({"message":"L'utilisateur à été bien été supprimé"}) , 201
+        else:
+            return jsonify({"message":"L'Utilisateur n'a pas été supprimé ou n'existe pas "}), 404 ("Not found")
+        
+    except  mysql.connector.Error as err:
+        
+        cnx.rollback()
+        print("Erreur MySQL:",err)
+        return jsonify({"message":"Erreur lors de la suppression de l'utilisateur"}), 500
+        
+    finally:
+        cursor.close()
+        cnx.close()
+        session.clear()       
+        return render_template("home.html",profile = None)
+    
+        
             
 
             

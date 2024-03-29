@@ -18,3 +18,12 @@ def genre():
 def platforms():
     return render_template("platforms.html")
 
+@views.route('/login')
+def login():
+    return render_template("Login.html")
+
+@views.route('/signUp')
+def signUp():
+    return render_template("signUp.html")
+
+    
