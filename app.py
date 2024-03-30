@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'Ujojo'
 
 @app.route("/")
-def home():
+def login():
     return render_template("login.html")
 
 

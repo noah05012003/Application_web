@@ -68,9 +68,35 @@ def delete_user():
         cursor.close()
         cnx.close()
         session.clear()       
-        return render_template("home.html",profile = None)
+        return render_template("login.html")
     
         
             
 
-            
+@server.route("/user/add/game/gameID=<int:game_id>", methods = ['POST'])
+def add_game_to_library(game_id):
+    
+    try:
+        user_id = session.get("user_id")
+        sql_command = "INSERT INTO GAMES(user_id,game_id) VALUES(%s,%s);"
+        cursor.execute(sql_command,(user_id,game_id))
+        result = cursor.fetchone()
+        cnx.commit()
+        if result == 0:
+            return jsonify({"message":"Le jeu est déjà présent dans votre library"}),200
+        else:
+            return jsonify({"message":"Le jeu à bien été ajouté dans votre library"}),201
+        
+        
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:",err)
+        return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
+    finally:
+        
+        if 'cursor' in locals():
+            cursor.close()
+        if 'cnx' in locals():
+            cnx.close()
+        
+        
+    

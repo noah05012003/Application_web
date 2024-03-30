@@ -26,8 +26,9 @@ def login_user():
             info_user = cursor.fetchall()
             if info_user != None:
                 
-                session['Username'] = info_user[1]
-                session['Email'] = Email
+                session['user_name'] = info_user[1]
+                session['user_mail'] = Email
+                session['user_id'] = info_user[0]
                 return render_template ("home.html" , profile = session)
             else:
                 flash("L'Utilisateur n'existe pas ",category='error')
