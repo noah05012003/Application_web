@@ -1,4 +1,4 @@
--- Active: 1706643717890@@127.0.0.1@3306@VideoGame
+-- Active: 1706643717890@@127.0.0.1@3306@video_game
 CREATE DATABASE video_game;
 USE video_game;
   DEFAULT CHARACTER SET = 'utf8mb4';
@@ -125,4 +125,21 @@ END;
 //
 
 DELIMITER ;
+
+
+--Procédure pour ajouter une utilisateur 
+DELIMITER //
+
+CREATE PROCEDURE add_user(IN p_username VARCHAR(255), IN p_usermail VARCHAR(255) , p_userpassword VARCHAR(255))
+BEGIN
+      IF EXISTS (SELECT * FROM Users WHERE user_mail = p_usermail) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Le mail existe déjà ';
+      ELSE
+        INSERT INTO Users (user_name , user_mail , user_password) VALUES(p_username,p_usermail,p_userpassword);
+      END IF;
+END//
+
+DELIMITER;
+
 

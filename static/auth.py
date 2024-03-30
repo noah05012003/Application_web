@@ -45,7 +45,7 @@ def signUp():
         Email = request.form.get("Email")
         Username = request.form.get("Username")
         Password = request.form.get("Password")
-        Password_confirm = request.form.get("Password_confirm")
+        Password_confirm = request.form.get("Password Confirm")
         
         #Contraintes
         if len(Email) <= 10:
