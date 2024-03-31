@@ -103,6 +103,6 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   loadGames(currentPage);
   
 
-
+ const api_key = "86a34209259b4dd496f0989055c1711b"
 
 
