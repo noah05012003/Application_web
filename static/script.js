@@ -55,6 +55,8 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   .catch(error => {
     console.error('Erreur lors de la récupération des données de l\'API:', error);
   });
+
+
   let currentPage = 1; // Commence à la première page
   const maxGames = 100; // Limite maximale de jeux à afficher
   let gamesLoaded = 0;
