@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   .then(response => response.json())
   .then(data => {
@@ -54,46 +55,53 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   .catch(error => {
     console.error('Erreur lors de la récupération des données de l\'API:', error);
   });
-  let currentPage = 2; // Commence à la première page
+  let currentPage = 1; // Commence à la première page
+  const maxGames = 100; // Limite maximale de jeux à afficher
+  let gamesLoaded = 0;
 
   function loadGames(page) {
-    fetch(`https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b&page=${page}`)
+    // Vérifiez si nous avons déjà chargé 100 jeux
+    if (gamesLoaded >= maxGames) {
+      return; // Si c'est le cas, ne chargez plus de jeux
+    }
+  
+    fetch(`https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b&page=${page}&page_size=20`) // Assurez-vous que la taille de page est définie sur 20 jeux par requête (ou selon ce que l'API permet)
       .then(response => response.json())
       .then(data => {
         const gamesContainer = document.getElementById('games-container');
   
         data.results.forEach(game => {
-          const gameCard = document.createElement('div');
-          gameCard.className = 'game-card';
-  
-          gameCard.innerHTML = `
-            <img src="${game.background_image}" alt="${game.name}" class="game-image">
-            <div class="game-info">
-              <h3 class="game-title">${game.name}</h3>
-              <div class="game-icons">
-                <!-- Icônes et autres éléments ici, comme les boutons de vote -->
-                <span>👍 ${game.rating}</span>
-                <!-- Ajoutez plus d'éléments ici si nécessaire -->
+          if (gamesLoaded < maxGames) { // Vérifiez si le nombre maximal de jeux n'a pas été chargé
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+            gameCard.innerHTML = `
+              <img src="${game.background_image}" alt="${game.name}" class="game-image">
+              <div class="game-info">
+                <h3 class="game-title">${game.name}</h3>
+                <div class="game-icons">
+                  <span>👍 ${game.rating}</span>
+                </div>
               </div>
-            </div>
-          `;
-  
-          gamesContainer.appendChild(gameCard);
+            `;
+            gamesContainer.appendChild(gameCard);
+            gamesLoaded++; // Incrémenter le compteur de jeux chargés
+          }
         });
   
-        // Incrémenter currentPage pour la prochaine charge
-        currentPage++;
+        // Incrémenter la page actuelle si moins de 100 jeux ont été chargés
+        if (gamesLoaded < maxGames) {
+          currentPage++;
+          loadGames(currentPage); // Chargez la page suivante
+        }
       })
       .catch(error => {
         console.error('Erreur lors de la récupération des données de l\'API:', error);
       });
   }
   
-  // Gestionnaire d'événement pour le bouton 'Charger plus'
-  document.getElementById('load-more').addEventListener('click', () => loadGames(currentPage));
-  
-  // Charge initialement la première page de jeux
+  // Commencez à charger les jeux dès le chargement du script
   loadGames(currentPage);
+  
 
 
 
