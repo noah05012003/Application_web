@@ -28,6 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
+ const api_key = "86a34209259b4dd496f0989055c1711b"
 
 
