@@ -78,7 +78,7 @@ def add_game_to_library(game_id):
     
     try:
         user_id = session.get("user_id")
-        sql_command = "INSERT INTO GAMES(user_id,game_id) VALUES(%s,%s);"
+        sql_command = "INSERT INTO Library(user_id,game_id) VALUES(%s,%s);"
         cursor.execute(sql_command,(user_id,game_id))
         result = cursor.fetchone()
         cnx.commit()
