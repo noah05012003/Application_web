@@ -21,3 +21,36 @@ body{
     width: 150px;
     border-radius: 8px;
 }
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajustez la taille minimale comme vous le souhaitez */
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .game-card {
+    background: #333; /* Couleur de fond de la carte */
+    color: #fff; /* Couleur du texte */
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  .game-image {
+    width: 100%;
+    display: block;
+  }
+  
+  .game-info {
+    padding: 0.5rem;
+  }
+  
+  .game-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .game-icons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
