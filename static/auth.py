@@ -15,7 +15,7 @@ auth = Blueprint('auth',__name__)
 
 
 
-@auth.route('/login_user', methods = ['POST']) #route vers la page html et fonction login
+@auth.route("/login_user", methods = ["POST"]) #route vers la page html et fonction login
 def login_user():
         Email = request.form.get("Email") #Obtenir les données du form 
         Password = request.form.get("Password")
@@ -40,7 +40,7 @@ def login_user():
    
     
 
-@auth.route('/signUp_user',methods = ['POST']) #route vers la page sign Up et fonction sign Up
+@auth.route('/signUp_user',methods = ["POST"]) #route vers la page sign Up et fonction sign Up
 def signUp():
         Email = request.form.get("Email")
         Username = request.form.get("Username")
