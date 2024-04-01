@@ -7,6 +7,25 @@
     font-size: 25px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
+
+.menu{
+  position:sticky ;
+  background: #333;
+  top: 0;
+  left: 0;
+}
+.menu ul{
+  display: flex;
+  list-style: none;
+}
+.menu li a{
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  color: #fff;
+  text-decoration: none;
+  display: block;
+  padding: 20px 20px;
+}
+
 h1{
     color: rgb(233, 229, 224);
     padding: 5px 8px 5px 8px;
@@ -54,3 +73,43 @@ body{
     justify-content: space-between;
     align-items: center;
   }
+ /* Stylisez le conteneur latéral et la navigation */
+#sidebar {
+  position: fixed; /* Pour que la barre latérale soit toujours visible sur le côté */
+  top: 0; /* Alignez le haut de la barre latérale avec le haut de la page */
+  left: 0; /* Alignez la barre latérale à gauche de la page */
+  width: 200px; /* Largeur de la barre latérale */
+  height: 100%; /* Hauteur totale de la barre latérale */
+  background-color: #333; /* Couleur de fond de la barre latérale */
+  color: white;
+  padding: 20px;
+}
+
+#sidebar nav ul {
+  list-style-type: none; /* Enlève les puces des listes */
+  padding: 0; /* Enlève le padding par défaut */
+  margin: 0; /* Enlève la marge par défaut */
+}
+
+#sidebar nav ul li {
+  margin-bottom: 10px; /* Espacement entre les boutons */
+}
+
+#sidebar button {
+  width: 100%; /* Étend les boutons pour remplir le conteneur */
+  padding: 10px; /* Padding pour les boutons */
+  border: none; /* Enlève la bordure des boutons */
+  background-color: #444; /* Couleur de fond pour les boutons */
+  color: white;
+  cursor: pointer;
+}
+
+#sidebar button:hover {
+  background-color: #555; /* Couleur de fond au survol des boutons */
+}
+
+/* Stylisez le contenu principal pour qu'il ne soit pas caché derrière la barre latérale */
+#main-content {
+  margin-left: 220px; /* Assurez-vous que cela soit plus large que la largeur de #sidebar */
+  /* Le reste de votre style ici */
+}

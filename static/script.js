@@ -31,9 +31,10 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   .then(response => response.json())
   .then(data => {
     const gamesContainer = document.getElementById('games-container');
-    gamesContainer.innerHTML = ''; // Clear existing games
+    gamesContainer.innerHTML = '';
 
     data.results.forEach(game => {
+      const userRatingHtml = displayUserRating(game.id); // Obtenez le HTML pour la note de l'utilisateur
       const gameCard = document.createElement('div');
       gameCard.className = 'game-card';
 
@@ -41,14 +42,16 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
         <img src="${game.background_image}" alt="${game.name}" class="game-image">
         <div class="game-info">
           <h3 class="game-title">${game.name}</h3>
-          <div class="game-icons">
-            <!-- Icônes et autres éléments ici, comme les boutons de vote -->
-            <span>👍 ${game.rating}</span>
-            <!-- Ajoutez plus d'éléments ici si nécessaire -->
+          <div class="game-ratings">
+            <span class="global-rating">Global Rating: ${game.rating}</span>
+            ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->
+          </div>
+          <div class="game-actions">
+            <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
+            <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
           </div>
         </div>
       `;
-
       gamesContainer.appendChild(gameCard);
     });
   })
@@ -74,17 +77,24 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   
         data.results.forEach(game => {
           if (gamesLoaded < maxGames) { // Vérifiez si le nombre maximal de jeux n'a pas été chargé
+            const userRatingHtml = displayUserRating(game.id);
             const gameCard = document.createElement('div');
             gameCard.className = 'game-card';
             gameCard.innerHTML = `
               <img src="${game.background_image}" alt="${game.name}" class="game-image">
               <div class="game-info">
                 <h3 class="game-title">${game.name}</h3>
-                <div class="game-icons">
-                  <span>👍 ${game.rating}</span>
+                <div class="game-ratings">
+                <span class="global-rating">Global Rating: ${game.rating}</span>
+                ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->
                 </div>
+                <div class="game-actions">
+                <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
+                <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
+              </div>
               </div>
             `;
+        
             gamesContainer.appendChild(gameCard);
             gamesLoaded++; // Incrémenter le compteur de jeux chargés
           }
@@ -106,5 +116,55 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   
 
  const api_key = "86a34209259b4dd496f0989055c1711b"
+
+ function rateGame(gameId) {
+  const userRating = prompt('Rate the game (1-5):', '');
+  if (userRating >= 1 && userRating <= 5) {
+    const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
+    ratings[gameId] = userRating;
+    localStorage.setItem('userRatings', JSON.stringify(ratings));
+    updateGameCardRating(gameId, userRating); // Mettez à jour l'affichage de la note
+  } else {
+    alert('Invalid rating. Please enter a number from 1 to 5.');
+  }
+}
+function updateGameCardRating(gameId, userRating) {
+  const ratingDisplay = document.getElementById(`rating-${gameId}`);
+  if (ratingDisplay) {
+    ratingDisplay.textContent = `Your Rating: ${userRating}`;
+  }
+}
+function displayUserRating(gameId) {
+  const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
+  // La note de l'utilisateur sera affichée dans un élément span avec une classe spécifique pour le style
+  return ratings[gameId] ? `<span class="user-rating">Your Rating: ${ratings[gameId]}</span>` : '<span class="no-rating">Rate this game</span>';
+}
+
+
+function addToLibrary(gameId) {
+  const library = JSON.parse(localStorage.getItem('library')) || [];
+  if (!library.includes(gameId)) {
+    library.push(gameId);
+    localStorage.setItem('library', JSON.stringify(library));
+    console.log(`Game with ID: ${gameId} added to library`);
+  } else {
+    console.log('Game is already in the library.');
+  }
+}
+
+function displayLibrary() {
+  const library = JSON.parse(localStorage.getItem('library')) || [];
+  console.log('Library:', library);
+  
+  // creer un conteneur avec l'id 'library-container' dans ma page Library
+  const libraryContainer = document.getElementById('library-container');
+  libraryContainer.innerHTML = ''; 
+
+  // Affichez le jeu dans la bibliothèque
+  library.forEach(gameId => {
+    // Ici faire requête à l'API pour obtenir les détails du jeu par son ID
+    // créer les éléments HTML pour l'affichage, ou utiliser des informations stockées localement
+  });
+}
 
 
