@@ -15,7 +15,7 @@ cursor = cnx.cursor()
     
 @app.route("/")
 def login():
-    return render_template("login.html")
+    return render_template("home.html")
 
 @app.route("/signUp")
 def signUp():
