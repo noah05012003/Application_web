@@ -35,7 +35,6 @@ CREATE TABLE Games (
   game_id INTEGER PRIMARY KEY,
   game_slug VARCHAR(255) UNIQUE NOT NULL,
   game_name VARCHAR(100) NOT NULL,
-  description TEXT,
   game_rating DECIMAL(3, 1) CHECK (game_rating BETWEEN 0 AND 10), -- Assuming rating is a decimal value
   game_image VARCHAR(255),
   CONSTRAINT check_game_slug_format CHECK (game_slug REGEXP '%[-a-zA-Z0-9_]+'),
@@ -163,6 +162,7 @@ DELIMITER;
 
 
 
+ALTER TABLE `Games` DROP COLUMN Description;
 
 
 

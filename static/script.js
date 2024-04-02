@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (response.ok) {
-                // Rediriger l'utilisateur vers la page d'accueil après la suppression réussie
+                // Rediriger l'utilisateur vers la page login après la suppression réussie
                 window.location.href = '/';
             } else {
                 // Afficher un message d'erreur en cas d'échec de la suppression
@@ -42,6 +42,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
         <img src="${game.background_image}" alt="${game.name}" class="game-image">
         <div class="game-info">
           <h3 class="game-title">${game.name}</h3>
+          <p class="game-slug">Slug: ${game.slug}</p>
           <div class="game-ratings">
             <span class="global-rating">Global Rating: ${game.rating}</span>
             ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->

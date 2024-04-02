@@ -28,28 +28,28 @@ def signUp():
 
 @app.route("/following")
 def following():
-    return render_template("following.html")
+    return render_template("following.html",profile = session)
 
 @app.route("/library")
 def library():
-    return render_template("library.html")
+    return render_template("library.html",profile = session)
 
 @app.route("/genre")
 def genre():
-    return render_template("genres.html")
+    return render_template("genres.html",profile = session)
 
 @app.route("/platforms")
 def platforms():
-    return render_template("platforms.html")
+    return render_template("platforms.html",profile = session)
     
 @app.route('/logout')
 def logout():
     session.clear()
-    return render_template ("login.html",profile = session)
+    return render_template ("login.html")
 
 @app.route("/reviews")
 def reviews():
-    return render_template("reviews.html")
+    return render_template("reviews.html",profile = session)
 
 @app.route('/home')
 def home():
@@ -65,7 +65,7 @@ def login_user():
         if info_user is not None:
             user_id , user_name , user_mail , user_password = info_user 
             if (check_password_hash(user_password,Password)):
-                #global ProfileUtilisateur
+                
                 session['user_name'] = user_name
                 session['user_mail'] = user_mail
                 session['user_id'] = user_id
@@ -144,7 +144,6 @@ def delete_user():
                 return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
             else:
                 # Renvoyer une réponse JSON indiquant que l'utilisateur n'a pas été supprimé ou n'existe pas
-                redirect(url_for("home"))
                 return jsonify({"message": "L'utilisateur n'a pas été supprimé ou n'existe pas"}), 404
         else:
             # Renvoyer une réponse JSON indiquant qu'aucun utilisateur n'a été trouvé avec cet ID
