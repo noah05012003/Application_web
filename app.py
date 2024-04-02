@@ -169,6 +169,7 @@ def add_game_to_library(game_id):
         result = cursor.fetchone()
         cnx.commit()
         if result == 0:
+            flash("Le jeu a bien été ajouté")
             return jsonify({"message":"Le jeu est déjà présent dans votre library"}),200
         else:
             return jsonify({"message":"Le jeu à bien été ajouté dans votre library"}),201
@@ -177,12 +178,8 @@ def add_game_to_library(game_id):
     except mysql.connector.Error as err:
         print("Erreur MYSQL:",err)
         return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
-    finally:
+    
         
-        if 'cursor' in locals():
-            cursor.close()
-        if 'cnx' in locals():
-            cnx.close()
 
 
 
