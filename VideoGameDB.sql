@@ -163,7 +163,7 @@ DELIMITER;
 
 
 ALTER TABLE `Games` DROP COLUMN Description;
-
+SELECT * FROM `Users`;
 
 
 

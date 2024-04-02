@@ -70,7 +70,7 @@ def login_user():
                 session['user_mail'] = user_mail
                 session['user_id'] = user_id
                 flash(f"{user_name}",category='success')
-                return redirect(url_for("home", profile = session)),201
+                return render_template("home.html", profile = session),201
             else:
                 flash("Le Mot de passe ou l'adresse mail est incorrect ",category='error')
                 return render_template("login.html"),500
@@ -156,16 +156,18 @@ def delete_user():
         # Renvoyer une réponse JSON indiquant qu'une erreur s'est produite lors de la suppression de l'utilisateur
         return jsonify({"message": "Erreur lors de la suppression de l'utilisateur"}), 500
     finally:
+        flash("L'Utilisateur à bien été supprimé ")
         return redirect(url_for("login"))
     
 
 
 #Fonction pour ajouter un jeu à sa library
-@app.route("/user/add/game/gameID=<int:game_id>", methods = ['POST'])
-def add_game_to_library(game_id):
+@app.route("/user/add/game/", methods = ['POST'])
+def add_game_to_library():
     
     try:
         user_id = session.get("user_id")
+        game_id = request.json.get('game_id')
         sql_command = "INSERT INTO Library(user_id,game_id) VALUES(%s,%s);"
         cursor.execute(sql_command,(user_id,game_id))
         cnx.commit()
