@@ -1,10 +1,15 @@
-from flask import Flask , render_template , session , jsonify , flash , request
+from flask import Flask , render_template , jsonify , flash , request , session
+from flask_session import Session
 import mysql.connector
 from flask_bcrypt import generate_password_hash , check_password_hash
 
 
 app = Flask(__name__)
-app.secret_key = 'Ujojo'
+app.config['SECRET_KEY'] = 'Ujojo'
+app.config['SESSION_TYPE'] = 'filesystem'
+
+Session(app)
+
     
 cnx = mysql.connector.connect(
     user = "root", password="raoul123", host="localhost", database="video_game")
@@ -40,7 +45,7 @@ def platforms():
 @app.route('/logout')
 def logout():
     session.clear()
-    return render_template ("login.html")
+    return render_template ("login.html",profile = session)
 
 @app.route("/reviews")
 def reviews():
@@ -50,8 +55,7 @@ def reviews():
 def home():
     return render_template("home.html", profile = session)
 
-#Authentification de l'utilisateur
-profile = {}
+#fonction login 
 @app.route("/login_user", methods = ["POST"]) #route vers la page html et fonction login
 def login_user():
         Email = request.form.get("Email") #Obtenir les données du form 
@@ -61,10 +65,11 @@ def login_user():
         if info_user is not None:
             user_id , user_name , user_mail , user_password = info_user 
             if (check_password_hash(user_password,Password)):
+                #global ProfileUtilisateur
                 session['user_name'] = user_name
                 session['user_mail'] = user_mail
                 session['user_id'] = user_id
-                flash(f"Bienvenue {user_name}")
+                flash(f"{user_name}",category='success')
                 return render_template ("home.html" , profile = session),201
             else:
                 flash("Le Mot de passe ou l'adresse mail est incorrect ",category='error')
@@ -76,7 +81,7 @@ def login_user():
             
    
     
-
+#fonction pour créer un compte/utilisateur 
 @app.route('/signUp_user', methods=["POST"])
 def signUp_user():
     Email = request.form.get("Email")
@@ -118,35 +123,67 @@ def signUp_user():
             flash("Erreur lors de l'insertion de l'utilisateur", category='error')
             return render_template("signUp.html") , 500
            
-
-@app.route("/user/delete/",methods=['POST'])
+#focntion pour supprimer un utilisateur
+@app.route("/user/delete/", methods=['POST'])
 def delete_user():
-
     try:
         
-        user_id = session.get("user_id") #Récupère l'id de l'user dans la session 
-        sql_command = "CALL delete_user(%s);"
-        cursor.execute(sql_command,(user_id,))
+        user_id = session["user_id"]
+        sql_command = "SELECT delete_user(%s);"
+        cursor.execute(sql_command, (user_id,))
         result = cursor.fetchone()
-        result_value = result[0]
-        cnx.commit()
         
-        
-        
-        if result_value == 1:
-            return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
+        if result is not None:
+            result_value = result[0]
+            cnx.commit()
+
+            if result_value == 1:
+                # Renvoyer une réponse JSON indiquant que l'utilisateur a été supprimé avec succès
+                flash("L'Utilisateur à bien été supprimé ")
+                return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
+            else:
+                # Renvoyer une réponse JSON indiquant que l'utilisateur n'a pas été supprimé ou n'existe pas
+                return jsonify({"message": "L'utilisateur n'a pas été supprimé ou n'existe pas"}), 404
         else:
-            return jsonify({"message": "L'utilisateur n'a pas été supprimé ou n'existe pas"}), 404
-       
+            # Renvoyer une réponse JSON indiquant qu'aucun utilisateur n'a été trouvé avec cet ID
+            return jsonify({"message": f"Aucun utilisateur trouvé avec l'ID {user_id}"}), 404  
+
     except mysql.connector.Error as err:
         cnx.rollback()
         print("Erreur MySQL:", err)
-        flash()
+        # Renvoyer une réponse JSON indiquant qu'une erreur s'est produite lors de la suppression de l'utilisateur
         return jsonify({"message": "Erreur lors de la suppression de l'utilisateur"}), 500
     finally:
         session.clear()
-        flash("L'Utilisateur à bien été supprimé")
         return render_template("login.html")
+
+
+#Fonction pour ajouter un jeu à sa library
+@app.route("/user/add/game/gameID=<int:game_id>", methods = ['POST'])
+def add_game_to_library(game_id):
+    
+    try:
+        user_id = session.get("user_id")
+        sql_command = "INSERT INTO Library(user_id,game_id) VALUES(%s,%s);"
+        cursor.execute(sql_command,(user_id,game_id))
+        result = cursor.fetchone()
+        cnx.commit()
+        if result == 0:
+            return jsonify({"message":"Le jeu est déjà présent dans votre library"}),200
+        else:
+            return jsonify({"message":"Le jeu à bien été ajouté dans votre library"}),201
+        
+        
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:",err)
+        return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
+    finally:
+        
+        if 'cursor' in locals():
+            cursor.close()
+        if 'cnx' in locals():
+            cnx.close()
+
 
 
 

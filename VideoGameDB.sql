@@ -13,7 +13,7 @@ CREATE TABLE Platforms (
   platform_year INTEGER,
   platform_image VARCHAR(255),
   CONSTRAINT check_platform_slug_format CHECK (platform_slug REGEXP '[-a-zA-Z0-9_]+'),
-  CONSTRAINT check_platform_uri_format CHECK (platform_image REGEXP '^https?://.*'),
+  CONSTRAINT check_platform_uri_format CHECK (platform_image REGEXP '^https?://.*')
   
 );
 
@@ -140,23 +140,30 @@ BEGIN
       END IF;
 END//
 
+--Requetes à supprimer plus tard 
+ALTER TABLE Users AUTO_INCREMENT = 0;
 
---Procedure pour supprimer un utilisateur 
-DELIMITER;
 
-CREATE PROCEDURE delete_user(IN userID INTEGER)
+
+--Fonction pour supprimer un utilisateur 
+DELIMITER//
+
+CREATE FUNCTION delete_user(userID INT)
+RETURNS INT DETERMINISTIC
 BEGIN
-    DELETE FROM `Users` WHERE user_id = userID;
+    DECLARE rows_affected INT;
+    
+    DELETE FROM Users WHERE user_id = userID;
+    SET rows_affected = ROW_COUNT();
+    
+    RETURN rows_affected;
 END//
 
 DELIMITER;
 
---Requetes à supprimer plus tard 
-ALTER TABLE Users AUTO_INCREMENT = 0;
 
-SELECT * FROM `Users`;
-CALL delete_user(4);
 
-DELETE FROM `Users`;
+
+
 
 
