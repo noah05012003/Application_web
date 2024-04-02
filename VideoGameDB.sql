@@ -127,7 +127,7 @@ END;
 DELIMITER ;
 
 
---Procédure pour ajouter une utilisateur 
+--Procédure pour ajouter un utilisateur 
 DELIMITER //
 
 CREATE PROCEDURE add_user(IN p_username VARCHAR(255), IN p_usermail VARCHAR(255) , p_userpassword VARCHAR(255))
@@ -140,6 +140,23 @@ BEGIN
       END IF;
 END//
 
+
+--Procedure pour supprimer un utilisateur 
 DELIMITER;
+
+CREATE PROCEDURE delete_user(IN userID INTEGER)
+BEGIN
+    DELETE FROM `Users` WHERE user_id = userID;
+END//
+
+DELIMITER;
+
+--Requetes à supprimer plus tard 
+ALTER TABLE Users AUTO_INCREMENT = 0;
+
+SELECT * FROM `Users`;
+CALL delete_user(4);
+
+DELETE FROM `Users`;
 
 

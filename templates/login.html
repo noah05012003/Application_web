@@ -64,12 +64,49 @@
         .signup-link a:hover {
             text-decoration: underline;
         }
+
+        .flash-messages {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .flash-message {
+            margin-bottom: 10px;
+        }
+
+        .close-btn {
+            float: right;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">
+                        <span class="close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <div class="container">
         <h2>Login</h2>
-        <form action="/login_user" method= "POST">
+        <form action="/login_user" method="POST">
             <div class="form-group">
                 <input type="text" name="Email" placeholder="Email" required>
             </div>

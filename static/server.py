@@ -99,4 +99,30 @@ def add_game_to_library(game_id):
             cnx.close()
         
         
+def create_account():
+    data = request.get_json()
+    user_data = (data["Username"],data["Email"],generate_password_hash(data["Password"])) #chiffrage du mot de passe 
     
+    try:
+        
+        sql_command = "CALL add_user(%s,%s,%s);"
+        cursor.execute(sql_command,user_data)
+        cnx.commit()
+        
+        if cursor.rowcount > 0:
+           return  jsonify({"message":"L'utilisateur à bien  été ajouté"}) , 201
+        else:
+            return jsonify({"message":"L'Utilisateur n'a pas été ajouté "}), 500
+        
+    except mysql.connector.Error as err:
+        
+        print("Erreur MySQL:", err)
+        return jsonify({"message":"Erreur lors de l'insertion de l'utilisateur"}), 500
+       
+    
+    finally :
+        
+        if 'cursor' in locals():
+            cursor.close()
+        if 'cnx' in locals():
+            cnx.close()

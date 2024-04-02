@@ -11,11 +11,11 @@ cnx = mysql.connector.connect(
 
 cursor = cnx.cursor()
 
-    
+
     
 @app.route("/")
 def login():
-    return render_template("home.html")
+    return render_template("login.html")
 
 @app.route("/signUp")
 def signUp():
@@ -51,82 +51,103 @@ def home():
     return render_template("home.html", profile = session)
 
 #Authentification de l'utilisateur
+profile = {}
 @app.route("/login_user", methods = ["POST"]) #route vers la page html et fonction login
 def login_user():
         Email = request.form.get("Email") #Obtenir les données du form 
         Password = request.form.get("Password")
-        cursor.execute("SELECT user_password FROM Users WHERE user_mail = %s;",(Email,))
-        password_hashed = cursor.fetchone() #Récupération du mot de passe chiffré 
-        if (password_hashed != None) and check_password_hash(password_hashed[0],Password): 
-            cursor.execute("SELECT * FROM Users WHERE user_mail = %s;",(Email,))
-            info_user = cursor.fetchall()
-            if info_user != None:
-                
-                session['user_name'] = info_user[1]
-                session['user_mail'] = Email
-                session['user_id'] = info_user[0]
-                return render_template ("home.html" , profile = session)
+        cursor.execute("SELECT * FROM Users WHERE user_mail = %s;", (Email,))
+        info_user = cursor.fetchone()
+        if info_user is not None:
+            user_id , user_name , user_mail , user_password = info_user 
+            if (check_password_hash(user_password,Password)):
+                session['user_name'] = user_name
+                session['user_mail'] = user_mail
+                session['user_id'] = user_id
+                flash(f"Bienvenue {user_name}")
+                return render_template ("home.html" , profile = session),201
             else:
-                flash("L'Utilisateur n'existe pas ",category='error')
-                return render_template("login.html")
-               
-        else :
-            flash("L'Email ou le mot de passe sont incorrects",category='error')
-            return render_template("login.html") #Rajouter message dans login.html comme dans signUp.html
+                flash("Le Mot de passe ou l'adresse mail est incorrect ",category='error')
+                return render_template("login.html"),500
+        else:
+            flash("L'Utilisateur n'existe pas ",category='error')
+            return render_template("login.html"),500
+         
+            
    
     
 
-@app.route('/signUp_user',methods = ["POST"]) #route vers la page sign Up et fonction sign Up
-def signUp():
-        Email = request.form.get("Email")
-        Username = request.form.get("Username")
-        Password = request.form.get("Password")
-        Password_confirm = request.form.get("Password Confirm")
-        
-        #Contraintes
-        if len(Email) <= 10:
-            flash("Votre email doit avoir plus de 10 caractères ",category='error')
-        elif len(Username) < 2:
-            flash("Votre nom d'utilisateur doit avoir plus de 2 caractères ",category='error')
-        elif (Password != Password_confirm):
-            flash("Les mots de passes ne sont pas similaires ",category='error')
-        elif len(Password) < 8:
-            flash("Votre mot de passe doit avoir plus de 8 caractères ",category='error')
-        else:
-            create_account()
-            flash("Votre compte à été crée avec succes ",category='success')
-            #add to database avec fonction create_account() dans server.py
-            #Ajouter les messages flash dans le fichier signUp.html
-            return render_template ("login.html")
-        
-#Fonction pour ajouter l'utilisateur à la base de donnée
-def create_account():
-    data = request.get_json()
-    user_data = (data["Username"],data["Email"],generate_password_hash(data["Password"])) #chiffrage du mot de passe 
+@app.route('/signUp_user', methods=["POST"])
+def signUp_user():
+    Email = request.form.get("Email")
+    Username = request.form.get("Username")
+    Password = request.form.get("Password")
+    Password_confirm = request.form.get("Password Confirm")
     
+    # Contraintes
+    if len(Email) <= 10:
+        flash("Votre email doit avoir plus de 10 caractères ", category='error')
+        return render_template("signUp.html"),500
+    elif len(Username) < 2:
+        flash("Votre nom d'utilisateur doit avoir plus de 2 caractères ", category='error')
+        return render_template("signUp.html"),500
+    elif Password != Password_confirm:
+        flash("Les mots de passe ne sont pas similaires ", category='error')
+        return render_template("signUp.html"),500
+    elif len(Password) < 8:
+        flash("Votre mot de passe doit avoir plus de 8 caractères ", category='error')
+        return render_template("signUp.html"),500
+    
+    else:
+        # Ajouter l'utilisateur à la base de données
+        user_data = (Username, Email, generate_password_hash(Password))
+        try:
+            sql_command = "CALL add_user(%s, %s, %s);"
+            cursor.execute(sql_command, user_data)
+            cnx.commit()
+        
+            if cursor.rowcount > 0:
+                flash("Votre compte a été créé avec succès", category='success')
+                return render_template("login.html") , 201
+            else:
+                flash("L'utilisateur n'a pas été ajouté ", category='error')
+                return render_template("signUp.html") , 201
+        
+        except mysql.connector.Error as err:
+            print("Erreur MySQL:", err)
+            flash("Erreur lors de l'insertion de l'utilisateur", category='error')
+            return render_template("signUp.html") , 500
+           
+
+@app.route("/user/delete/",methods=['POST'])
+def delete_user():
+
     try:
         
-        sql_command = "CALL add_user(%s,%s,%s);"
-        cursor.execute(sql_command,user_data)
+        user_id = session.get("user_id") #Récupère l'id de l'user dans la session 
+        sql_command = "CALL delete_user(%s);"
+        cursor.execute(sql_command,(user_id,))
+        result = cursor.fetchone()
+        result_value = result[0]
         cnx.commit()
         
-        if cursor.rowcount > 0:
-           return  jsonify({"message":"L'utilisateur à bien  été ajouté"}) , 201
+        
+        
+        if result_value == 1:
+            return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
         else:
-            return jsonify({"message":"L'Utilisateur n'a pas été ajouté "}), 500
-        
-    except mysql.connector.Error as err:
-        
-        print("Erreur MySQL:", err)
-        return jsonify({"message":"Erreur lors de l'insertion de l'utilisateur"}), 500
+            return jsonify({"message": "L'utilisateur n'a pas été supprimé ou n'existe pas"}), 404
        
-    
-    finally :
-        
-        if 'cursor' in locals():
-            cursor.close()
-        if 'cnx' in locals():
-            cnx.close()
+    except mysql.connector.Error as err:
+        cnx.rollback()
+        print("Erreur MySQL:", err)
+        flash()
+        return jsonify({"message": "Erreur lors de la suppression de l'utilisateur"}), 500
+    finally:
+        session.clear()
+        flash("L'Utilisateur à bien été supprimé")
+        return render_template("login.html")
+
 
 
     
