@@ -1,4 +1,4 @@
-from flask import Flask , render_template , jsonify , flash , request , session
+from flask import Flask , render_template , jsonify , flash , request , session , redirect , url_for
 from flask_session import Session
 import mysql.connector
 from flask_bcrypt import generate_password_hash , check_password_hash
@@ -70,7 +70,7 @@ def login_user():
                 session['user_mail'] = user_mail
                 session['user_id'] = user_id
                 flash(f"{user_name}",category='success')
-                return render_template ("home.html" , profile = session),201
+                return redirect(url_for("home", profile = session)),201
             else:
                 flash("Le Mot de passe ou l'adresse mail est incorrect ",category='error')
                 return render_template("login.html"),500
@@ -140,9 +140,11 @@ def delete_user():
             if result_value == 1:
                 # Renvoyer une réponse JSON indiquant que l'utilisateur a été supprimé avec succès
                 flash("L'Utilisateur à bien été supprimé ")
+                session.clear()
                 return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
             else:
                 # Renvoyer une réponse JSON indiquant que l'utilisateur n'a pas été supprimé ou n'existe pas
+                redirect(url_for("home"))
                 return jsonify({"message": "L'utilisateur n'a pas été supprimé ou n'existe pas"}), 404
         else:
             # Renvoyer une réponse JSON indiquant qu'aucun utilisateur n'a été trouvé avec cet ID
@@ -151,11 +153,12 @@ def delete_user():
     except mysql.connector.Error as err:
         cnx.rollback()
         print("Erreur MySQL:", err)
+        redirect(url_for("home"))
         # Renvoyer une réponse JSON indiquant qu'une erreur s'est produite lors de la suppression de l'utilisateur
         return jsonify({"message": "Erreur lors de la suppression de l'utilisateur"}), 500
     finally:
-        session.clear()
-        return render_template("login.html")
+        return redirect(url_for("login"))
+    
 
 
 #Fonction pour ajouter un jeu à sa library
@@ -166,12 +169,12 @@ def add_game_to_library(game_id):
         user_id = session.get("user_id")
         sql_command = "INSERT INTO Library(user_id,game_id) VALUES(%s,%s);"
         cursor.execute(sql_command,(user_id,game_id))
-        result = cursor.fetchone()
         cnx.commit()
-        if result == 0:
-            flash("Le jeu a bien été ajouté")
+        if cursor.rowcount == 0:
+            flash("Le jeu est déjà présent dans votre library")
             return jsonify({"message":"Le jeu est déjà présent dans votre library"}),200
         else:
+            flash("Le jeu à bien été ajouté ")
             return jsonify({"message":"Le jeu à bien été ajouté dans votre library"}),201
         
         
