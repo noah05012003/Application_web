@@ -6,26 +6,21 @@ USE video_game;
 
 CREATE TABLE Platforms (
   platform_id INTEGER PRIMARY KEY,
-  platform_slug VARCHAR(255) UNIQUE NOT NULL,
   platform_name VARCHAR(100) UNIQUE NOT NULL,
   platform_game_count INTEGER NOT NULL,
-  description TEXT NOT NULL,
   platform_year INTEGER,
   platform_image VARCHAR(255),
-  CONSTRAINT check_platform_slug_format CHECK (platform_slug REGEXP '[-a-zA-Z0-9_]+'),
   CONSTRAINT check_platform_uri_format CHECK (platform_image REGEXP '^https?://.*')
   
 );
 
 
+
 CREATE TABLE Genres (
   genre_id INTEGER PRIMARY KEY,
-  genre_slug VARCHAR(255) UNIQUE NOT NULL,
   genre_name VARCHAR(100) UNIQUE NOT NULL,
   genre_game_count INTEGER NOT NULL,
-  description TEXT NOT NULL,
   genre_image VARCHAR(255),
-  CONSTRAINT check_genre_slug_format CHECK (genre_slug REGEXP '[-a-zA-Z0-9_]+'),
   CONSTRAINT check_genre_uri_format CHECK (genre_image REGEXP '^https?://.*')
 );
 
@@ -33,13 +28,12 @@ CREATE TABLE Genres (
 
 CREATE TABLE Games (
   game_id INTEGER PRIMARY KEY,
-  game_slug VARCHAR(255) UNIQUE NOT NULL,
   game_name VARCHAR(100) NOT NULL,
   game_rating DECIMAL(3, 1) CHECK (game_rating BETWEEN 0 AND 10), -- Assuming rating is a decimal value
   game_image VARCHAR(255),
-  CONSTRAINT check_game_slug_format CHECK (game_slug REGEXP '%[-a-zA-Z0-9_]+'),
   CONSTRAINT check_game_uri_format CHECK (game_image REGEXP '^https?://.*')
 );
+
 
 
 CREATE TABLE Users (
@@ -139,9 +133,7 @@ BEGIN
       END IF;
 END//
 
---Requetes à supprimer plus tard 
-ALTER TABLE Users AUTO_INCREMENT = 0;
-
+DELIMITER;
 
 
 --Fonction pour supprimer un utilisateur 
@@ -161,9 +153,6 @@ END//
 DELIMITER;
 
 
-
-ALTER TABLE `Games` DROP COLUMN Description;
-SELECT * FROM `Users`;
 
 
 

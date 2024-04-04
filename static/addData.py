@@ -12,114 +12,88 @@ cursor = cnx.cursor()
 
 #Ajouter les jeux 
 games = []
-for num_page in range(1,2):
+for num_page in range(1, 6):
     api_url = f"https://api.rawg.io/api/games?key={api_key}&page={num_page}"
     response = httpx.get(api_url)
+    
     if response.status_code == 200:
-        data_game = response.json()["results"]
-        for game in data_game:
-            game_id = game["id"]
-            api_url = f"https://api.rawg.io/api/games/{game_id}?key={api_key}"
-            response = httpx.get(api_url)
-            
-            if response.status_code == 200:
-                data_game = response.json()
-                games.append(data_game)
-                print("Les données ont été inseré avec succes ")
-            else:
-                print(f"Erreur {response.status_code} lors de la récupération des données")
-    else:
-        print(f"Erreur {response.status_code} lors de la récupération des données") 
+        data_games = response.json()["results"]
         
-for game in games:
-    sql_command = "INSERT INTO Games(game_id,game_slug,game_name,game_rating,game_image) VALUES(%s,%s,%s,%s,%s);"
-    data_game = (
-        game["id"],
-        game["slug"],
-        game["name"],
-        game["rating"],
-        game["background_image"],
-    )
-cursor.execute(sql_command,data_game)
-cnx.commit()
+        for game in data_games:
+            game_id = game["id"]
+            game_name = game["name"]
+            game_rating = game["rating"]
+            game_image = game["background_image"]
+            
+            games.append((game_id, game_name, game_rating, game_image))
+            
+        print("Les données ont été insérées avec succès"),200
+    else:
+        print(f"Erreur {response.status_code} lors de la récupération des données")
 
+sql_command = "INSERT INTO Games(game_id, game_name, game_rating, game_image) VALUES(%s, %s, %s, %s);"
+cursor.executemany(sql_command, games)
+cnx.commit()
 
 
 #Ajouter les genres
 genres = []
 api_url = f"https://api.rawg.io/api/genres?key={api_key}"
 response = httpx.get(api_url)
+
 if response.status_code == 200:
-    data_genre = response.json()["results"]
-    for genre in data_genre:
+    data_genres = response.json()["results"]
+    
+    for genre in data_genres:
         genre_id = genre["id"]
-        api_url = f"https://api.rawg.io/api/genres/{genre_id}?key={api_key}"
-        response = httpx.get(api_url)
+        genre_name = genre["name"]
+        genre_game_count = genre["games_count"]
+        genre_image = genre["image_background"]
         
-        if response.status_code == 200:
-            data_genre = response.json()
-            genres.append(data_genre)
-            print("Les données ont été inseré avec succes")
-        else:
-            print(f"Erreur {response.status_code} lors de la récupération des données")
+        genres.append((genre_id, genre_name, genre_game_count, genre_image))
+        
+    print("Les données ont été insérées avec succès"),200
 else:
     print(f"Erreur {response.status_code} lors de la récupération des données")
 
-for genre in genres:
-    sql_command = "INSERT INTO Genres(genre_id,genre_slug,genre_name,genre_game_count,description,genre_image) VALUES(%s,%s,%s,%s,%s,%s);"
-    data_genre = (
-        genre["id"],
-        genre["slug"],
-        genre["name"],
-        genre["game_count"],
-        genre["description"],
-        genre["image_background"],
-    )
-cursor.execute(sql_command,data_genre)
+sql_command = "INSERT INTO Genres(genre_id, genre_name, genre_game_count, genre_image) VALUES(%s, %s, %s, %s);"
+cursor.executemany(sql_command, genres)
 cnx.commit()
 
 
 
 #Ajouter les platformes 
-platformes = []
-for num_page in range(1,2):
+platforms = []
+for num_page in range(1, 2):
     api_url = f"https://api.rawg.io/api/platforms?key={api_key}&page={num_page}"
     response = httpx.get(api_url)
+    
     if response.status_code == 200:
-        data_platform = response.json()["results"]
-        for platform in data_platform:
+        data_platforms = response.json()["results"]
+        
+        for platform in data_platforms:
             platform_id = platform["id"]
-            api_url = f"https://api.rawg.io/api/platforms/{platform_id}?key={api_key}"
-            response = httpx.get(api_url)
+            platform_name = platform["name"]
+            platform_game_count = platform["games_count"]
+            platform_year_start = platform["year_start"]
+            platform_image = platform["image_background"]
             
-            if response.status_code == 200:
-                data_platform = response.json()
-                platformes.append(data_platform)
-                print("Les données ont été inseré avec succes ")
-            else:
-                print(f"Erreur {response.status_code} lors de la récupération des données")
+            platforms.append((platform_id, platform_name, platform_game_count,platform_year_start, platform_image))
+            print("Les données ont été insérées avec succès")
     else:
         print(f"Erreur {response.status_code} lors de la récupération des données")
 
-for platform in platformes:
-    
-    sql_command = "INSERT INTO Platforms(platform_id,platform_slug,platform_name,platform_game_count,description,platform_year,platform_image) VALUES(%s,%s,%s,%s,%s,%s);"
-    data_platform = (
-        platform["id"],
-        platform["slug"],
-        platform["name"],
-        platform["game_count"],
-        platform["description"],
-        platform["year_start"],
-        platform["image_background"],
-    )
-cursor.execute(sql_command,data_platform)
+sql_command = "INSERT INTO Platforms(platform_id, platform_name, platform_game_count,platform_year, platform_image) VALUES(%s, %s, %s, %s, %s);"
+cursor.executemany(sql_command, platforms)
 cnx.commit()
 
 
 cursor.close()
 cnx.commit()
 cnx.close()
+
+print("Terminé!!!")
+
 
      
         

@@ -43,7 +43,6 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
         <div class="game-info">
           <h3 class="game-title">${game.name}</h3>
           <input type="hidden" class="game-id" value="${game.id}"> 
-          <p class="game-slug">Slug: ${game.slug}</p>
           <div class="game-ratings">
             <span class="global-rating">Global Rating: ${game.rating}</span>
             ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->
@@ -87,7 +86,6 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
               <div class="game-info">
                 <h3 class="game-title">${game.name}</h3>
                 <input type="hidden" class="game-id" value="${game.id}"> 
-                <p class="game-slug">Slug: ${game.slug}</p>
                 <div class="game-ratings">
                 <span class="global-rating">Global Rating: ${game.rating}</span>
                 ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->
@@ -151,24 +149,63 @@ function addToLibrary(gameId) {
     library.push(gameId);
     localStorage.setItem('library', JSON.stringify(library));
     console.log(`Game with ID: ${gameId} added to library`);
+
+    // Envoyer une requête POST au serveur Flask pour ajouter le jeu à la bibliothèque de l'utilisateur
+    axios.post("/user/add/game/", { game_id: gameId })
+      .then(function (response) {
+        console.log(response.data.message); // Afficher le message de réussite ou d'erreur
+        // Vous pouvez également effectuer d'autres actions en fonction de la réponse du serveur
+      })
+      .catch(function (error) {
+        console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
+        // Vous pouvez afficher un message d'erreur à l'utilisateur ou gérer l'erreur de toute autre manière appropriée
+      });
   } else {
     console.log('Game is already in the library.');
   }
 }
 
+
 function displayLibrary() {
   const library = JSON.parse(localStorage.getItem('library')) || [];
   console.log('Library:', library);
   
-  // creer un conteneur avec l'id 'library-container' dans ma page Library
+  // Récupérer le conteneur avec l'ID 'library-container' dans votre page Library
   const libraryContainer = document.getElementById('library-container');
   libraryContainer.innerHTML = ''; 
 
-  // Affichez le jeu dans la bibliothèque
+  // Afficher chaque jeu dans la bibliothèque
   library.forEach(gameId => {
-    // Ici faire requête à l'API pour obtenir les détails du jeu par son ID
-    // créer les éléments HTML pour l'affichage, ou utiliser des informations stockées localement
+    // Faire une requête à l'API pour obtenir les détails du jeu par son ID
+    fetch(`/api/games/${gameId}`)
+      .then(response => response.json())
+      .then(data => {
+        // Créer les éléments HTML pour afficher les détails du jeu
+        const gameElement = document.createElement('div');
+        gameElement.classList.add('game');
+        
+        const titleElement = document.createElement('h3');
+        titleElement.textContent = data.name;
+        gameElement.appendChild(titleElement);
+        
+        const ratingElement = document.createElement('p');
+        ratingElement.textContent = `Rating: ${data.rating}`;
+        gameElement.appendChild(ratingElement);
+
+        const backgroundElement = document.createElement('img');
+        backgroundElement.src = data.background_image;
+        gameElement.appendChild(backgroundElement);
+        
+        
+        
+        // Ajouter le jeu au conteneur de la bibliothèque
+        libraryContainer.appendChild(gameElement);
+      })
+      .catch(error => {
+        console.error('Error fetching game details:', error);
+      });
   });
 }
+
 
 
