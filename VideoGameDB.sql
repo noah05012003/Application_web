@@ -152,7 +152,8 @@ END//
 
 DELIMITER;
 
-
-
+-- Nous n'avons donc pas besoin de trigger pour supprimer ou mettre à NULL les éléments
+-- d'une library/following list ou encore une review  si l'utilisateur est supprimé grâce
+-- à la présence des contraintes de référence.
 
 

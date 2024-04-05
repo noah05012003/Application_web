@@ -149,17 +149,6 @@ function addToLibrary(gameId) {
     library.push(gameId);
     localStorage.setItem('library', JSON.stringify(library));
     console.log(`Game with ID: ${gameId} added to library`);
-
-    // Envoyer une requête POST au serveur Flask pour ajouter le jeu à la bibliothèque de l'utilisateur
-    axios.post("/user/add/game/", { game_id: gameId })
-      .then(function (response) {
-        console.log(response.data.message); // Afficher le message de réussite ou d'erreur
-        // Vous pouvez également effectuer d'autres actions en fonction de la réponse du serveur
-      })
-      .catch(function (error) {
-        console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
-        // Vous pouvez afficher un message d'erreur à l'utilisateur ou gérer l'erreur de toute autre manière appropriée
-      });
   } else {
     console.log('Game is already in the library.');
   }
@@ -177,7 +166,7 @@ function displayLibrary() {
   // Afficher chaque jeu dans la bibliothèque
   library.forEach(gameId => {
     // Faire une requête à l'API pour obtenir les détails du jeu par son ID
-    fetch(`/api/games/${gameId}`)
+    fetch("https://api.rawg.io/api/games/${gameId}")
       .then(response => response.json())
       .then(data => {
         // Créer les éléments HTML pour afficher les détails du jeu
@@ -188,15 +177,16 @@ function displayLibrary() {
         titleElement.textContent = data.name;
         gameElement.appendChild(titleElement);
         
+        
         const ratingElement = document.createElement('p');
         ratingElement.textContent = `Rating: ${data.rating}`;
         gameElement.appendChild(ratingElement);
-
+        
         const backgroundElement = document.createElement('img');
         backgroundElement.src = data.background_image;
         gameElement.appendChild(backgroundElement);
         
-        
+        // Ajouter d'autres détails du jeu selon vos besoins
         
         // Ajouter le jeu au conteneur de la bibliothèque
         libraryContainer.appendChild(gameElement);
@@ -206,6 +196,3 @@ function displayLibrary() {
       });
   });
 }
-
-
-

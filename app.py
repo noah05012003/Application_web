@@ -183,31 +183,29 @@ def add_game_to_library():
         print("Erreur MYSQL:",err)
         return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
     
+    
+    
 #Obtenir la library    
-@app.route("/user/library/",methods = ["GET"])
+@app.route("/user/library/", methods=["GET"])
 def get_library():
     try:
-        
         user_id = session.get("user_id")
-        cursor.execute("SELECT * FROM Library WHERE user_id = %s;",(user_id,))
+        cursor.execute("SELECT * FROM Library WHERE user_id = %s;", (user_id,))
         library = cursor.fetchall()
-        response = {"game":[]}
+        response = {"games": []}
         if library:
             for game in library:
-                response["game"].append(
+                response["games"].append(
                     {
                         "game_id": game[1], 
-                        "date_added":game[2],
+                        "date_added": game[2],
                     }
                 )
-        return jsonify(response),200
-    
+        return jsonify(response), 200
     except mysql.connector.Error as err:
-        print("Erreur MYSQL:",err)
-        return jsonify({"message":"Erreur dans la base de donnée"}),500
-    
+        print("Erreur MYSQL:", err)
+        return jsonify({"message": "Erreur dans la base de donnée"}), 500
 
-        
 
     
         
