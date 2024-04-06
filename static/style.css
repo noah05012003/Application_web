@@ -52,8 +52,8 @@ body{
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajustez la taille minimale comme vous le souhaitez */
     gap: 1rem;
     padding: 1rem;
-    max-width: 1200px; /* Largeur maximale du conteneur */
-    margin: 0 auto; /* Centrer le conteneur horizontalement */
+    max-width: 1200px; 
+    margin: 0 auto; 
   }
   
   .game-card {

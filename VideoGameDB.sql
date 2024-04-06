@@ -141,27 +141,17 @@ END//
 
 DELIMITER;
 
---Procedure pour ajouter un jeu 
-DELIMITER//
-CREATE PROCEDURE add_game(IN p_user_id INTEGER , IN p_game_id INTEGER)
-BEGIN
-        DECLARE game_number INTEGER;
-        (SELECT COUNT(*) INTO game_number FROM `Library` WHERE user_id = p_user_id AND game_id = p_game_id);
-        IF game_number > 0 THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Le jeu est déjà dans la library de utilisateur';
-        ELSE
-            INSERT INTO Library(user_id,game_id,date_added) VALUES(p_user_id,p_game_id,CURRENT_DATE());
-        END IF;
-END//
 
-DELIMITER;
+
+SELECT * from `Library`;
+
+
 
 --Procedure pour retirer un jeu 
 DELIMITER//
-CREATE PROCEDURE remove_game(IN p_user_id INTEGER)
+CREATE PROCEDURE remove_game(IN p_user_id INTEGER,IN p_game_id INTEGER)
 BEGIN
-      DELETE FROM Library WHERE user_id = p_user_id;
+      DELETE FROM Library WHERE user_id = p_user_id AND game_id = p_game_id;
 END//
 
 DELIMITER;

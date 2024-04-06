@@ -69,7 +69,7 @@ def login_user():
                 session['user_name'] = user_name
                 session['user_mail'] = user_mail
                 session['user_id'] = user_id
-                flash(f"{user_name}",category='success')
+                flash(f"Vous êtes connecté en tant que {user_name}",category='success')
                 return render_template("home.html", profile = session),201
             else:
                 flash("Le Mot de passe ou l'adresse mail est incorrect ",category='error')
@@ -139,7 +139,6 @@ def delete_user():
 
             if result_value == 1:
                 # Renvoyer une réponse JSON indiquant que l'utilisateur a été supprimé avec succès
-                flash("L'Utilisateur à bien été supprimé ")
                 session.clear()
                 return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
             else:
@@ -156,7 +155,7 @@ def delete_user():
         # Renvoyer une réponse JSON indiquant qu'une erreur s'est produite lors de la suppression de l'utilisateur
         return jsonify({"message": "Erreur lors de la suppression de l'utilisateur"}), 500
     finally:
-        flash("L'Utilisateur à bien été supprimé ")
+        flash("L'Utilisateur à bien été supprimé", category='success')
         return redirect(url_for("login"))
     
 
@@ -168,25 +167,28 @@ def add_game_to_library():
     try:
         user_id = session.get("user_id")
         game_id = request.json.get('game_id')
-        sql_command = "CALL add_game(%s,%s);"
-        cursor.execute(sql_command,(user_id,game_id))
+        sql_command = "INSERT INTO Library(user_id,game_id) VALUES(%s,%s);"
+        cursor.execute(sql_command,(user_id,game_id,))
         cnx.commit()
         if cursor.rowcount == 0:
-            flash("Le jeu est déjà présent dans votre library")
-            return jsonify({"message":"Le jeu est déjà présent dans votre library"}),200
+            flash("Le jeu est déjà présent dans votre library", category='error')
+            return jsonify({"message":"Le jeu est déà présent dans votre library"}),200
         else:
-            flash("Le jeu à bien été ajouté ")
+            flash("Le jeu à bien été ajouté ",category= 'success')
             return jsonify({"message":"Le jeu à bien été ajouté dans votre library"}),201
         
         
     except mysql.connector.Error as err:
         print("Erreur MYSQL:",err)
         return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
+    finally:
+        flash("Le jeu à bien été ajouté ", category= 'success')
+        
     
     
     
 #Obtenir la library    
-@app.route("/user/library/", methods=["GET"])
+@app.route("/user/library/", methods=['GET'])
 def get_library():
     try:
         user_id = session.get("user_id")
@@ -205,6 +207,42 @@ def get_library():
     except mysql.connector.Error as err:
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
+    
+@app.route("/user/remove/game",methods=['DELETE'])
+def remove_game():
+    try:
+        
+        user_id = session.get("user_id")
+        cursor.execute("SELECT * FROM Library WHERE user_id = %s;", (user_id,))
+        library_user = cursor.fetchall()
+        response = {"game":[]}
+        if library_user:
+            for game in library_user:
+                response["game"].append(
+                    {
+                        "game_id":game[1],
+                    }
+                )
+        if response["game"]:
+            game_id = response["game"][0]["game_id"]
+        else:
+            print("la liste est vide")
+        sql_command = "CALL remove_game(%s,%s);"
+        cursor.execute(sql_command,(user_id,game_id,))
+        cnx.commit()
+        if cursor.rowcount == 1:
+            flash("Le jeu à bien été supprimé", category= 'success')
+            return redirect(url_for("home"))
+        else:
+            flash("Le jeu n'a pas été surpprimé de votre library", category= 'error')
+            return jsonify({"message":f"Le jeu avec l'ID {game_id} n'a pas été supprimé de votre library"}),500
+        
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:", err)
+        return jsonify({"message": "Erreur dans la base de donnée"}), 500
+   
+    
+    
 
 
     

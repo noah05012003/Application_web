@@ -218,3 +218,27 @@ function displayLibrary() {
       console.error('Erreur lors de la récupération des jeux de la bibliothèque:', error);
     });
 }
+
+//Fonction pour supprimer le jeu de la library
+function DeleteToLibrary(gameId) {
+  // Faites une requête pour supprimer le jeu de la bibliothèque de l'utilisateur
+  fetch('/user/remove/game', {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ game_id: gameId })
+  
+  })
+  .then(response => response.json())
+  .then(data => {
+      // Affichez un message à l'utilisateur pour indiquer si le jeu a été supprimé avec succès ou non
+      console.log(data.message);
+      // Actualisez la bibliothèque de l'utilisateur ou effectuez d'autres actions en fonction de la réponse
+      // Par exemple, vous pouvez actualiser la page ou mettre à jour l'interface utilisateur
+  })
+  .catch(error => {
+      console.error('Erreur lors de la suppression du jeu de la bibliothèque:', error);
+  });
+}
+
