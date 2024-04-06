@@ -46,11 +46,20 @@ body{
     gap: 1rem;
     padding: 1rem;
   }
+
+  .game-library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajustez la taille minimale comme vous le souhaitez */
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1200px; /* Largeur maximale du conteneur */
+    margin: 0 auto; /* Centrer le conteneur horizontalement */
+  }
   
   .game-card {
     background: #333; /* Couleur de fond de la carte */
     color: #fff; /* Couleur du texte */
-    border-radius: 0.5rem;
+    border-radius: 12px;
     overflow: hidden;
   }
   

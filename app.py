@@ -42,7 +42,7 @@ def genre():
 def platforms():
     return render_template("platforms.html",profile = session)
     
-@app.route('/logout')
+@app.route('/logout') #OK
 def logout():
     session.clear()
     return render_template ("login.html")
@@ -55,8 +55,8 @@ def reviews():
 def home():
     return render_template("home.html", profile = session)
 
-#fonction login 
-@app.route("/login_user", methods = ["POST"]) #route vers la page html et fonction login
+#fonction login (#OK)
+@app.route("/login_user", methods = ["POST"]) 
 def login_user():
         Email = request.form.get("Email") #Obtenir les données du form 
         Password = request.form.get("Password")
@@ -81,7 +81,7 @@ def login_user():
             
    
     
-#fonction pour créer un compte/utilisateur 
+#fonction pour créer un compte/utilisateur (#OK)
 @app.route('/signUp_user', methods=["POST"])
 def signUp_user():
     Email = request.form.get("Email")
@@ -123,7 +123,7 @@ def signUp_user():
             flash("Erreur lors de l'insertion de l'utilisateur", category='error')
             return render_template("signUp.html") , 500
            
-#focntion pour supprimer un utilisateur
+#focntion pour supprimer un utilisateur (#OK)
 @app.route("/user/delete/", methods=['POST'])
 def delete_user():
     try:
@@ -161,14 +161,14 @@ def delete_user():
     
 
 
-#Fonction pour ajouter un jeu à sa library
+#Fonction pour ajouter un jeu à sa library (#OK)
 @app.route("/user/add/game/", methods = ['POST'])
 def add_game_to_library():
     
     try:
         user_id = session.get("user_id")
         game_id = request.json.get('game_id')
-        sql_command = "INSERT INTO Library(user_id,game_id) VALUES(%s,%s);"
+        sql_command = "CALL add_game(%s,%s);"
         cursor.execute(sql_command,(user_id,game_id))
         cnx.commit()
         if cursor.rowcount == 0:

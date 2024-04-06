@@ -51,8 +51,8 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
             <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
             <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
           </div>
-        </div>
-      `;
+        </div>`;
+
       gamesContainer.appendChild(gameCard);
     });
   })
@@ -93,9 +93,8 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
                 <div class="game-actions">
                 <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
                 <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
-              </div>
-              </div>
-            `;
+                </div>
+              </div>`;
         
             gamesContainer.appendChild(gameCard);
             gamesLoaded++; // Incrémenter le compteur de jeux chargés
@@ -144,55 +143,78 @@ function displayUserRating(gameId) {
 
 
 function addToLibrary(gameId) {
-  const library = JSON.parse(localStorage.getItem('library')) || [];
-  if (!library.includes(gameId)) {
-    library.push(gameId);
-    localStorage.setItem('library', JSON.stringify(library));
-    console.log(`Game with ID: ${gameId} added to library`);
-  } else {
-    console.log('Game is already in the library.');
-  }
+  fetch('/user/add/game/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ game_id: gameId })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.message); // Afficher un message de confirmation ou d'erreur
+    displayLibrary(); // Mettre à jour l'affichage de la bibliothèque
+  })
+  .catch(error => {
+    console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
+    // Gérer l'erreur de manière appropriée
+  });
 }
 
 
-function displayLibrary() {
-  const library = JSON.parse(localStorage.getItem('library')) || [];
-  console.log('Library:', library);
-  
-  // Récupérer le conteneur avec l'ID 'library-container' dans votre page Library
-  const libraryContainer = document.getElementById('library-container');
-  libraryContainer.innerHTML = ''; 
 
-  // Afficher chaque jeu dans la bibliothèque
-  library.forEach(gameId => {
-    // Faire une requête à l'API pour obtenir les détails du jeu par son ID
-    fetch("https://api.rawg.io/api/games/${gameId}")
-      .then(response => response.json())
-      .then(data => {
-        // Créer les éléments HTML pour afficher les détails du jeu
-        const gameElement = document.createElement('div');
-        gameElement.classList.add('game');
-        
-        const titleElement = document.createElement('h3');
-        titleElement.textContent = data.name;
-        gameElement.appendChild(titleElement);
-        
-        
-        const ratingElement = document.createElement('p');
-        ratingElement.textContent = `Rating: ${data.rating}`;
-        gameElement.appendChild(ratingElement);
-        
-        const backgroundElement = document.createElement('img');
-        backgroundElement.src = data.background_image;
-        gameElement.appendChild(backgroundElement);
-        
-        // Ajouter d'autres détails du jeu selon vos besoins
-        
-        // Ajouter le jeu au conteneur de la bibliothèque
-        libraryContainer.appendChild(gameElement);
-      })
-      .catch(error => {
-        console.error('Error fetching game details:', error);
-      });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sélectionnez le bouton LIBRARY
+  const libraryButton = document.getElementById('libraryAccessBtn');
+
+  // Ajoutez un écouteur d'événement de clic au bouton
+  libraryButton.addEventListener('click', function() {
+      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
+      displayLibrary();
   });
+});
+
+
+function displayLibrary() {
+  // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
+  fetch('/user/library/')
+    .then(response => response.json())
+    .then(data => {
+      const libraryContainer = document.getElementById('library-container');
+      libraryContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
+
+      // Parcourir les jeux de la bibliothèque et les afficher dans la bibliothèque
+      data.games.forEach(game => {
+        // Faites une requête à l'API Rawg.io pour obtenir les détails du jeu par son ID
+        fetch(`https://api.rawg.io/api/games/${game.game_id}?key=86a34209259b4dd496f0989055c1711b`)
+          .then(response => response.json())
+          .then(gameDetails => {
+            // Créer les éléments HTML pour afficher les détails du jeu
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+
+            gameCard.innerHTML = `
+              <img src="${gameDetails.background_image}" alt="${gameDetails.name}" class="game-image">
+              <div class="game-info">
+                <h3 class="game-title">${gameDetails.name}</h3>
+                <input type="hidden" class="game-id" value="${game.id}"> 
+                <p>Date Added: ${game.date_added}</p>
+                <p>Rating: ${gameDetails.rating}</p>
+                <button onclick="DeleteToLibrary('${game.id}')" class="btn-add">Remove from Library</button>
+
+              </div>
+            `;
+
+            libraryContainer.appendChild(gameCard); // Ajoute le jeu à la bibliothèque
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération des détails du jeu:', error);
+          });
+      });
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des jeux de la bibliothèque:', error);
+    });
 }

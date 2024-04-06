@@ -10,7 +10,7 @@ cnx = mysql.connector.connect(
 
 cursor = cnx.cursor()
 
-#Ajouter les jeux 
+#Ajouter les jeux (#OK)
 games = []
 for num_page in range(1, 6):
     api_url = f"https://api.rawg.io/api/games?key={api_key}&page={num_page}"
@@ -36,7 +36,7 @@ cursor.executemany(sql_command, games)
 cnx.commit()
 
 
-#Ajouter les genres
+#Ajouter les genres (#OK)
 genres = []
 api_url = f"https://api.rawg.io/api/genres?key={api_key}"
 response = httpx.get(api_url)
@@ -62,7 +62,7 @@ cnx.commit()
 
 
 
-#Ajouter les platformes 
+#Ajouter les platformes (#OK)
 platforms = []
 for num_page in range(1, 2):
     api_url = f"https://api.rawg.io/api/platforms?key={api_key}&page={num_page}"
@@ -92,7 +92,7 @@ cursor.close()
 cnx.commit()
 cnx.close()
 
-print("Terminé!!!")
+print("Terminé!!!") #OK
 
 
      

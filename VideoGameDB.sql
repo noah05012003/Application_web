@@ -14,6 +14,10 @@ CREATE TABLE Platforms (
   
 );
 
+SELECT * FROM `Users`;
+
+SELECT * FROM `Library`;
+
 
 
 CREATE TABLE Genres (
@@ -70,6 +74,8 @@ CREATE TABLE Following (
 );
 
 
+
+
 CREATE TABLE Library (
   user_id INTEGER,
   game_id INTEGER,
@@ -91,14 +97,14 @@ CREATE UNIQUE INDEX idx_platform_with_most_game ON Platforms (platform_game_coun
 
 
     
--- "J'ai apporté queqlque correction mais sinon c'est good"
+
 -- Creer des Routines pour les fonctionnalités suivante : 
 la création d’un compte pour l’utilisateur ou supprimer l’utilisateur 
 Ajout/Supprimer un  jeux à notre wishlist 
-Suivre un genre , un développeur ou une platformers ( Ajout à la liste de following )
+Suivre un genre ou une platforme ( Ajout à la liste de following )
 Ajout/Modifier/Supprimer une review 
 Mettre une note à un jeu 
-Modifier les informations de l’utilisateur
+
 
 --Un conseil moi perso j'aurai utilisé des procédures ou fonctions pour tout ce qui est ajouter
 -- pour le rester supprimer/modifier j'aurai utilisé des triggers 
@@ -135,6 +141,32 @@ END//
 
 DELIMITER;
 
+--Procedure pour ajouter un jeu 
+DELIMITER//
+CREATE PROCEDURE add_game(IN p_user_id INTEGER , IN p_game_id INTEGER)
+BEGIN
+        DECLARE game_number INTEGER;
+        (SELECT COUNT(*) INTO game_number FROM `Library` WHERE user_id = p_user_id AND game_id = p_game_id);
+        IF game_number > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Le jeu est déjà dans la library de utilisateur';
+        ELSE
+            INSERT INTO Library(user_id,game_id,date_added) VALUES(p_user_id,p_game_id,CURRENT_DATE());
+        END IF;
+END//
+
+DELIMITER;
+
+--Procedure pour retirer un jeu 
+DELIMITER//
+CREATE PROCEDURE remove_game(IN p_user_id INTEGER)
+BEGIN
+      DELETE FROM Library WHERE user_id = p_user_id;
+END//
+
+DELIMITER;
+      
+
 
 --Fonction pour supprimer un utilisateur 
 DELIMITER//
@@ -148,6 +180,19 @@ BEGIN
     SET rows_affected = ROW_COUNT();
     
     RETURN rows_affected;
+END//
+
+DELIMITER;
+
+--Procedure pour follow un genre ou une platforme
+CREATE PROCEDURE follow_genre_platform(IN p_user_id INTEGER , IN p_genre_id INTEGER,IN p_platform_id INTEGER)
+BEGIN
+      IF EXISTS(SELECT * FROM `Following` WHERE user_id = p_user_id AND genre_id = p_genre_id AND platform_id = p_platform_id) THEN
+          SIGNAL SQLSTATE '45000'
+          SET MESSAGE_TEXT = 'Les genres et platformes sont déjà suivi';
+      ELSE
+          INSERT INTO `Following`(user_id,genre_id,platform_id,date_followed) VALUES(p_user_id,p_genre_id,p_platform_id,CURRENT_DATE());
+      END IF;
 END//
 
 DELIMITER;
