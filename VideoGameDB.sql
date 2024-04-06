@@ -143,10 +143,6 @@ DELIMITER;
 
 
 
-SELECT * from `Library`;
-
-
-
 --Procedure pour retirer un jeu 
 DELIMITER//
 CREATE PROCEDURE remove_game(IN p_user_id INTEGER,IN p_game_id INTEGER)

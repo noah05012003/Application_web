@@ -18,7 +18,7 @@ cursor = cnx.cursor()
 
 
     
-@app.route("/")
+@app.route("/",methods = ['GET','POST'])
 def login():
     return render_template("login.html")
 
@@ -30,7 +30,7 @@ def signUp():
 def following():
     return render_template("following.html",profile = session)
 
-@app.route("/library")
+@app.route("/library", methods=['GET','POST','DELETE'])
 def library():
     return render_template("library.html",profile = session)
 
@@ -51,7 +51,7 @@ def logout():
 def reviews():
     return render_template("reviews.html",profile = session)
 
-@app.route('/home')
+@app.route('/home',methods=['GET','POST','DELETE'])
 def home():
     return render_template("home.html", profile = session)
 
@@ -140,6 +140,7 @@ def delete_user():
             if result_value == 1:
                 # Renvoyer une réponse JSON indiquant que l'utilisateur a été supprimé avec succès
                 session.clear()
+                flash("L'utilisateur à bien été supprimé",category='success')
                 return jsonify({"message": "L'utilisateur a été supprimé avec succès"}), 201
             else:
                 # Renvoyer une réponse JSON indiquant que l'utilisateur n'a pas été supprimé ou n'existe pas
@@ -155,7 +156,6 @@ def delete_user():
         # Renvoyer une réponse JSON indiquant qu'une erreur s'est produite lors de la suppression de l'utilisateur
         return jsonify({"message": "Erreur lors de la suppression de l'utilisateur"}), 500
     finally:
-        flash("L'Utilisateur à bien été supprimé", category='success')
         return redirect(url_for("login"))
     
 
@@ -181,8 +181,7 @@ def add_game_to_library():
     except mysql.connector.Error as err:
         print("Erreur MYSQL:",err)
         return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
-    finally:
-        flash("Le jeu à bien été ajouté ", category= 'success')
+    
         
     
     
@@ -232,7 +231,7 @@ def remove_game():
         cnx.commit()
         if cursor.rowcount == 1:
             flash("Le jeu à bien été supprimé", category= 'success')
-            return redirect(url_for("home"))
+            return render_template("home.html",profile = session)
         else:
             flash("Le jeu n'a pas été surpprimé de votre library", category= 'error')
             return jsonify({"message":f"Le jeu avec l'ID {game_id} n'a pas été supprimé de votre library"}),500
