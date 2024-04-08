@@ -208,6 +208,7 @@ function displayLibrary() {
             `;
 
             libraryContainer.appendChild(gameCard); // Ajoute le jeu à la bibliothèque
+            window.location.reload();
           })
           .catch(error => {
             console.error('Erreur lors de la récupération des détails du jeu:', error);
@@ -236,6 +237,7 @@ function DeleteToLibrary(gameId) {
       console.log(data.message);
       // Actualisez la bibliothèque de l'utilisateur ou effectuez d'autres actions en fonction de la réponse
       // Par exemple, vous pouvez actualiser la page ou mettre à jour l'interface utilisateur
+      window.location.reload();
   })
   .catch(error => {
       console.error('Erreur lors de la suppression du jeu de la bibliothèque:', error);
