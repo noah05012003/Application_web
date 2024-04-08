@@ -117,8 +117,8 @@ body{
   background-color: #555; /* Couleur de fond au survol des boutons */
 }
 
-/* Stylisez le contenu principal pour qu'il ne soit pas caché derrière la barre latérale */
+/* Stylisez le contenu principal */
 #main-content {
-  margin-left: 220px; /* Assurez-vous que cela soit plus large que la largeur de #sidebar */
-  /* Le reste de votre style ici */
+  margin-left: 220px;
+
 }
