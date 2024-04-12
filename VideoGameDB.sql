@@ -188,3 +188,4 @@ DELIMITER;
 -- à la présence des contraintes de référence.
 
 
+SELECT * FROM `Users`;

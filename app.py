@@ -171,7 +171,7 @@ def add_game_to_library():
         cursor.execute(sql_command,(user_id,game_id,))
         cnx.commit()
         if cursor.rowcount == 0:
-            flash("Le jeu est déjà présent dans votre library", category='error')
+            flash("Le jeu est déjà présent dans votre library", category= 'error')
             return jsonify({"message":"Le jeu est déà présent dans votre library"}),200
         else:
             flash("Le jeu à bien été ajouté ",category= 'success')

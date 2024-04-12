@@ -208,7 +208,7 @@ function displayLibrary() {
             `;
 
             libraryContainer.appendChild(gameCard); // Ajoute le jeu à la bibliothèque
-            window.location.reload();
+            
           })
           .catch(error => {
             console.error('Erreur lors de la récupération des détails du jeu:', error);
