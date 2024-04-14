@@ -291,7 +291,6 @@ function addToLibrary(gameId) {
   });
 }
 
-
  /*platforme*/
  document.addEventListener('DOMContentLoaded', function() {
   fetch('https://api.rawg.io/api/platforms?key=86a34209259b4dd496f0989055c1711b')
@@ -315,3 +314,4 @@ function addToLibrary(gameId) {
       console.error('Error fetching platforms:', error);
   });
 });
+
