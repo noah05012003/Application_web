@@ -71,7 +71,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
       return; // Si c'est le cas, ne chargez plus de jeux
     }
   
-    fetch(`https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b&page=${page}&page_size=20`) // Assurez-vous que la taille de page est définie sur 20 jeux par requête (ou selon ce que l'API permet)
+    fetch(`https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b&page=${page}&page_size=20`) 
       .then(response => response.json())
       .then(data => {
         const gamesContainer = document.getElementById('games-container');
