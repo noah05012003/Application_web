@@ -49,8 +49,8 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
           </div>
           <div class="game-actions">
             <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
-            <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
-          </div>
+            <button onclick="addToLibrary(gameId)">Add to Library</button>
+            </div>
         </div>`;
 
       gamesContainer.appendChild(gameCard);
@@ -135,90 +135,7 @@ function updateGameCardRating(gameId, userRating) {
     ratingDisplay.textContent = `Your Rating: ${userRating}`;
   }
 }
-function displayUserRating(gameId) {
-  const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
-  // La note de l'utilisateur sera affichée dans un élément span avec une classe spécifique pour le style
-  return ratings[gameId] ? `<span class="user-rating">Your Rating: ${ratings[gameId]}</span>` : '<span class="no-rating">Rate this game</span>';
-}
 
-
-function addToLibrary(gameId) {
-  fetch('/user/add/game/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ game_id: gameId })
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log(data.message); // Afficher un message de confirmation ou d'erreur
-    displayLibrary(); // Mettre à jour l'affichage de la bibliothèque
-  })
-  .catch(error => {
-    console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
-    // Gérer l'erreur de manière appropriée
-  });
-}
-
-
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Sélectionnez le bouton LIBRARY
-  const libraryButton = document.getElementById('libraryAccessBtn');
-
-  // Ajoutez un écouteur d'événement de clic au bouton
-  libraryButton.addEventListener('click', function() {
-      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
-      displayLibrary();
-  });
-});
-
-
-function displayLibrary() {
-  // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
-  fetch('/user/library/')
-    .then(response => response.json())
-    .then(data => {
-      const libraryContainer = document.getElementById('library-container');
-      libraryContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
-
-      // Parcourir les jeux de la bibliothèque et les afficher dans la bibliothèque
-      data.games.forEach(game => {
-        // Faites une requête à l'API Rawg.io pour obtenir les détails du jeu par son ID
-        fetch(`https://api.rawg.io/api/games/${game.game_id}?key=86a34209259b4dd496f0989055c1711b`)
-          .then(response => response.json())
-          .then(gameDetails => {
-            // Créer les éléments HTML pour afficher les détails du jeu
-            const gameCard = document.createElement('div');
-            gameCard.className = 'game-card';
-
-            gameCard.innerHTML = `
-              <img src="${gameDetails.background_image}" alt="${gameDetails.name}" class="game-image">
-              <div class="game-info">
-                <h3 class="game-title">${gameDetails.name}</h3>
-                <input type="hidden" class="game-id" value="${game.id}"> 
-                <p>Date Added: ${game.date_added}</p>
-                <p>Rating: ${gameDetails.rating}</p>
-                <button onclick="DeleteToLibrary('${game.id}')" class="btn-add">Remove from Library</button>
-
-              </div>
-            `;
-
-            libraryContainer.appendChild(gameCard); // Ajoute le jeu à la bibliothèque
-            
-          })
-          .catch(error => {
-            console.error('Erreur lors de la récupération des détails du jeu:', error);
-          });
-      });
-    })
-    .catch(error => {
-      console.error('Erreur lors de la récupération des jeux de la bibliothèque:', error);
-    });
-}
 
 //Fonction pour supprimer le jeu de la library
 function DeleteToLibrary(gameId) {
@@ -243,7 +160,13 @@ function DeleteToLibrary(gameId) {
       console.error('Erreur lors de la suppression du jeu de la bibliothèque:', error);
   });
 }
+function displayUserRating(gameId) {
+  const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
+  // La note de l'utilisateur sera affichée
+  return ratings[gameId] ? `<span class="user-rating">Your Rating: ${ratings[gameId]}</span>` : '<span class="no-rating">Rate this game</span>';
+}
 
+/*genre*/
 document.addEventListener('DOMContentLoaded', fetchGenres);
 
 function fetchGenres() {
@@ -282,3 +205,113 @@ function followGenre(genreName) {
     alert(`You are already following the ${genreName} genre.`);
   }
 }
+
+function displayFollowedGenres() {
+  const followedGenresContainer = document.getElementById('followed-genres-container');
+  const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
+
+  followedGenresContainer.innerHTML = ''; 
+  if (followedGenres.length === 0) {
+    followedGenresContainer.innerHTML = '<p>You are not following any genres.</p>';
+  } else {
+    followedGenres.forEach(genreName => {
+      const genreCard = document.createElement('div');
+      genreCard.className = 'followed-genre-card';
+      genreCard.textContent = genreName;
+      followedGenresContainer.appendChild(genreCard);
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', displayFollowedGenres);
+
+/*library*/
+document.addEventListener('DOMContentLoaded', function() {
+  const games = [
+    {
+      id: 'grand-theft-auto-v',
+      name: "Grand Theft Auto V",
+      image: "path/to/gta-v-image.jpg",  // Replace with the actual image path
+      globalRating: 4.47,
+      userRating: 5
+    },
+    {
+      id: 'the-witcher-3-wild-hunt',
+      name: "The Witcher 3: Wild Hunt",
+      image: "path/to/witcher-3-image.jpg",  // Replace with the actual image path
+      globalRating: 4.65,
+      userRating: 1
+    },
+    {
+      id: 'portal-2',
+      name: "Portal 2",
+      image: "path/to/portal-2-image.jpg",  // Replace with the actual image path
+      globalRating: 4.61,
+      userRating: 2
+    },
+    {
+      id: 'counter-strike-global-offensive',
+      name: "Counter-Strike: Global Offensive",
+      image: "path/to/csgo-image.jpg",  // Replace with the actual image path
+      globalRating: 3.57,
+      userRating: undefined  // undefined if the user has not rated the game
+    }
+  ];
+    
+  const libraryContainer = document.getElementById('library-container');
+
+  games.forEach(game => {
+    const gameCard = document.createElement('div');
+    gameCard.className = 'game-card';
+    gameCard.innerHTML = `
+      <img src="${game.image}" alt="${game.name}" class="game-image">
+      <div class="game-info">
+        <h3 class="game-title">${game.name}</h3>
+        <p>Rating: ${game.rating}</p>
+      </div>
+    `;
+    libraryContainer.appendChild(gameCard);
+  });
+});
+
+function addToLibrary(gameId) {
+  fetch('/user/add/game/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ game_id: gameId })
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert(data.message);  // Show success or error message
+  })
+  .catch(error => {
+    console.error('Error adding game to the library:', error);
+  });
+}
+
+
+ /*platforme*/
+ document.addEventListener('DOMContentLoaded', function() {
+  fetch('https://api.rawg.io/api/platforms?key=86a34209259b4dd496f0989055c1711b')
+  .then(response => response.json())
+  .then(data => {
+      const platformsContainer = document.getElementById('platforms-container');
+
+      data.results.forEach(platform => {
+          const platformCard = document.createElement('div');
+          platformCard.className = 'platform-card';
+
+          platformCard.innerHTML = `
+              <img src="${platform.image_background}" alt="${platform.name}">
+              <h3>${platform.name}</h3>
+          `;
+
+          platformsContainer.appendChild(platformCard);
+      });
+  })
+  .catch(error => {
+      console.error('Error fetching platforms:', error);
+  });
+});

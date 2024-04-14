@@ -34,21 +34,11 @@
   </head>
 
   <body>
-    <div class="flash-messages">
-      {% with messages = get_flashed_messages() %}
-          {% if messages %}
-              {% for message in messages %}
-                  <div class="flash-message">
-                      <span class="close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
-                      {{ message }}
-                  </div>
-              {% endfor %}
-          {% endif %}
-      {% endwith %}
   </div>
     <header>
       <div class="menu">
         <ul>
+          <li><a href="home.html">HOME</button></a></li>
           <li><a href="reviews.html">REVIEWS</button></a></li>
           <li><a href="following.html">FOLLOWING</button></a></li>
           <li><a href="genres.html">GENRES</button></a></li>
@@ -67,8 +57,9 @@
   
       
       <div id="games-container" class="games-grid"></div>
+
       <button id="load-more" class="btn-load-more">Load More Games</button>
-    </header>
+
 
     <main></main>
     <footer></footer>
@@ -86,4 +77,5 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   </body>
+</header>
 </html>

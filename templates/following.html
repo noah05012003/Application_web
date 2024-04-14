@@ -14,6 +14,7 @@
         <ul>
           <li><a href="home.html">HOME</button></a></li>
           <li><a href="reviews.html">REVIEWS</button></a></li>
+          <li><a href="following.html">FOLLOWING</button></a></li>
           <li><a href="genres.html">GENRES</button></a></li>
           <li><a href="platforms.html">PLATFORMES</button></a></li>
         </ul>
@@ -22,9 +23,15 @@
         <h1>VGBD</h1>
         <form id="search-form">
           <input type="text" id="search-input" placeholder="search-VGBD" />
-          <button type="button" class="btn btn-outline-primary" onclick="displayLibrary()">LIBRARY</button>
+          <a href="library.html" ><button type="button" class="btn btn-outline-primary" onclick="displayLibrary()">LIBRARY</button></a>
           <a href="login.html"><button type="button" class="btn btn-outline-primary">login</button></a>
           <button id="deleteUserBtn" type="button" class="btn btn-outline-primary">DELETE ACCOUNT</button>
         </form>
       </div>
+      <main>
+        <h1>Followed Genres</h1>
+        <div id="followed-genres-container" ></div>
+      </main>
     </header>
+    <script src="/static/script.js"></script>
+  </body>
