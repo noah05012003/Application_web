@@ -49,7 +49,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
           </div>
           <div class="game-actions">
             <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
-            <button onclick="addToLibrary(gameId)">Add to Library</button>
+            <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
             </div>
         </div>`;
 
@@ -91,8 +91,8 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
                 ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->
                 </div>
                 <div class="game-actions">
-                <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
-                <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
+                  <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
+                  <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
                 </div>
               </div>`;
         
@@ -246,16 +246,7 @@ function addToLibrary(gameId) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Sélectionnez le bouton LIBRARY
-  const libraryButton = document.getElementById('libraryAccessBtn');
 
-  // Ajoutez un écouteur d'événement de clic au bouton
-  libraryButton.addEventListener('click', function() {
-      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
-      displayLibrary();
-  });
-});
 
 function displayUserRating(gameId) {
   const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
