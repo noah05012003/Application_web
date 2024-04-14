@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', displayFollowedGenres);
 
 /*library*/
 document.addEventListener('DOMContentLoaded', function() {
+
   const games = [
     {
       id: 'grand-theft-auto-v',
@@ -257,8 +258,9 @@ document.addEventListener('DOMContentLoaded', function() {
       userRating: undefined  // undefined if the user has not rated the game
     }
   ];
-    
   const libraryContainer = document.getElementById('library-container');
+
+    
 
   games.forEach(game => {
     const gameCard = document.createElement('div');
