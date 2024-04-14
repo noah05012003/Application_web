@@ -225,57 +225,10 @@ function displayFollowedGenres() {
 
 document.addEventListener('DOMContentLoaded', displayFollowedGenres);
 
-/*library*/
-document.addEventListener('DOMContentLoaded', function() {
 
-  const games = [
-    {
-      id: 'grand-theft-auto-v',
-      name: "Grand Theft Auto V",
-      image: "path/to/gta-v-image.jpg",  // Replace with the actual image path
-      globalRating: 4.47,
-      userRating: 5
-    },
-    {
-      id: 'the-witcher-3-wild-hunt',
-      name: "The Witcher 3: Wild Hunt",
-      image: "path/to/witcher-3-image.jpg",  // Replace with the actual image path
-      globalRating: 4.65,
-      userRating: 1
-    },
-    {
-      id: 'portal-2',
-      name: "Portal 2",
-      image: "path/to/portal-2-image.jpg",  // Replace with the actual image path
-      globalRating: 4.61,
-      userRating: 2
-    },
-    {
-      id: 'counter-strike-global-offensive',
-      name: "Counter-Strike: Global Offensive",
-      image: "path/to/csgo-image.jpg",  // Replace with the actual image path
-      globalRating: 3.57,
-      userRating: undefined  // undefined if the user has not rated the game
-    }
-  ];
-  const libraryContainer = document.getElementById('library-container');
 
-    
 
-  games.forEach(game => {
-    const gameCard = document.createElement('div');
-    gameCard.className = 'game-card';
-    gameCard.innerHTML = `
-      <img src="${game.image}" alt="${game.name}" class="game-image">
-      <div class="game-info">
-        <h3 class="game-title">${game.name}</h3>
-        <p>Rating: ${game.rating}</p>
-      </div>
-    `;
-    libraryContainer.appendChild(gameCard);
-  });
-});
-
+// Fonction Javascript qui est relié à la fonction flask 
 function addToLibrary(gameId) {
   fetch('/user/add/game/', {
     method: 'POST',
@@ -292,6 +245,102 @@ function addToLibrary(gameId) {
     console.error('Error adding game to the library:', error);
   });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sélectionnez le bouton LIBRARY
+  const libraryButton = document.getElementById('libraryAccessBtn');
+
+  // Ajoutez un écouteur d'événement de clic au bouton
+  libraryButton.addEventListener('click', function() {
+      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
+      displayLibrary();
+  });
+});
+
+function displayUserRating(gameId) {
+  const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
+  // La note de l'utilisateur sera affichée dans un élément span avec une classe spécifique pour le style
+  return ratings[gameId] ? `<span class="user-rating">Your Rating: ${ratings[gameId]}</span>` : '<span class="no-rating">Rate this game</span>';
+}
+
+
+function addToLibrary(gameId) {
+  fetch('/user/add/game/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ game_id: gameId })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.message); // Afficher un message de confirmation ou d'erreur
+    displayLibrary(); // Mettre à jour l'affichage de la bibliothèque
+  })
+  .catch(error => {
+    console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
+    // Gérer l'erreur de manière appropriée
+  });
+}
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sélectionnez le bouton LIBRARY
+  const libraryButton = document.getElementById('libraryAccessBtn');
+
+  // Ajoutez un écouteur d'événement de clic au bouton
+  libraryButton.addEventListener('click', function() {
+      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
+      displayLibrary();
+  });
+});
+
+
+function displayLibrary() {
+  // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
+  fetch('/user/library/')
+    .then(response => response.json())
+    .then(data => {
+      const libraryContainer = document.getElementById('library-container');
+      libraryContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
+
+      // Parcourir les jeux de la bibliothèque et les afficher dans la bibliothèque
+      data.games.forEach(game => {
+        // Faites une requête à l'API Rawg.io pour obtenir les détails du jeu par son ID
+        fetch(`https://api.rawg.io/api/games/${game.game_id}?key=86a34209259b4dd496f0989055c1711b`)
+          .then(response => response.json())
+          .then(gameDetails => {
+            // Créer les éléments HTML pour afficher les détails du jeu
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+
+            gameCard.innerHTML = `
+              <img src="${gameDetails.background_image}" alt="${gameDetails.name}" class="game-image">
+              <div class="game-info">
+                <h3 class="game-title">${gameDetails.name}</h3>
+                <input type="hidden" class="game-id" value="${game.id}"> 
+                <p>Date Added: ${game.date_added}</p>
+                <p>Rating: ${gameDetails.rating}</p>
+                <button onclick="DeleteToLibrary('${game.id}')" class="btn-add">Remove from Library</button>
+              </div>
+            `;
+
+            libraryContainer.appendChild(gameCard); // Ajoute le jeu à la bibliothèque
+
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération des détails du jeu:', error);
+          });
+      });
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des jeux de la bibliothèque:', error);
+    });
+}
+
 
  /*platforme*/
  document.addEventListener('DOMContentLoaded', function() {

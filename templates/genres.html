@@ -5,30 +5,55 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/style.css" />
-    <title>VGBD</title>
+    <title>Genres</title>
+    <style>
+      .flash-messages {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+  
+      .flash-message {
+        margin-bottom: 10px;
+      }
+  
+      .close-btn {
+        float: right;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      
+      
+    </style>
   </head>
 
   <body>
     <header>
       <div class="menu">
         <ul>
-          <li><a href="home.html">HOME</button></a></li>
-          <li><a href="reviews.html">REVIEWS</button></a></li>
-          <li><a href="following.html">FOLLOWING</button></a></li>
-          <li><a href="genres.html">GENRES</button></a></li>
-          <li><a href="platforms.html">PLATFORMES</button></a></li>
+          <li><a href="/home">HOME</button></a></li>
+          <li><a href="/reviews">REVIEWS</button></a></li>
+          <li><a href="/following">FOLLOWING</button></a></li>
+          <li><a href="/platforms">PLATFORMES</button></a></li>
         </ul>
       </div>
       <div id="search-bar">
         <h1>VGBD</h1>
         <form id="search-form">
           <input type="text" id="search-input" placeholder="search-VGBD" />
-          <a href="library.html" ><button type="button" class="btn btn-outline-primary" onclick="displayLibrary()">LIBRARY</button></a>
-          <a href="login.html"><button type="button" class="btn btn-outline-primary">login</button></a>
+          <a href="/library" ><button type="button" class="btn btn-outline-primary">LIBRARY</button></a>
+          <a href="/logout"><button type="button" class="btn btn-outline-primary">LOGOUT</button></a>
           <button id="deleteUserBtn" type="button" class="btn btn-outline-primary">DELETE ACCOUNT</button>
         </form>
       </div>
-      <h1>Genres</h1>
       <div id="genre-container" class="genre-grid"></div>
     
     <main></main>
