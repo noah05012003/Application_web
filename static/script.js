@@ -244,3 +244,41 @@ function DeleteToLibrary(gameId) {
   });
 }
 
+document.addEventListener('DOMContentLoaded', fetchGenres);
+
+function fetchGenres() {
+  fetch('https://api.rawg.io/api/genres?key=86a34209259b4dd496f0989055c1711b')
+    .then(response => response.json())
+    .then(data => {
+      const genreContainer = document.getElementById('genre-container');
+      genreContainer.innerHTML = '';
+
+      data.results.forEach(genre => {
+        const genreCard = document.createElement('div');
+        genreCard.className = 'genre-card';
+
+        genreCard.innerHTML = `
+          <img src="${genre.image_background}" alt="${genre.name}" class="genre-image">
+          <div class="genre-content">
+            <h3 class="genre-title">${genre.name}</h3>
+            <button onclick="followGenre('${genre.name}')" class="btn-follow">Follow</button>
+          </div>
+        `;
+        genreContainer.appendChild(genreCard);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching genres:', error);
+    });
+}
+
+function followGenre(genreName) {
+  const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
+  if (!followedGenres.includes(genreName)) {
+    followedGenres.push(genreName);
+    localStorage.setItem('followedGenres', JSON.stringify(followedGenres));
+    alert(`You are now following the ${genreName} genre!`);
+  } else {
+    alert(`You are already following the ${genreName} genre.`);
+  }
+}
