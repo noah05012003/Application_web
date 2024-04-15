@@ -199,42 +199,26 @@ function fetchGenres() {
     });
 }
 
-function followGenre(genreName) {
-  const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
-  if (!followedGenres.includes(genreName)) {
-    followedGenres.push(genreName);
-    localStorage.setItem('followedGenres', JSON.stringify(followedGenres));
-    alert(`You are now following the ${genreName} genre!`);
-  } else {
-    alert(`You are already following the ${genreName} genre.`);
-  }
-}
-
-//Envoyer une requête Json au serveur flask
-function followGenreRequest(genreId, genreName) {
-  fetch('/user/follow/genre', {
+function followedGenres(genreId) {
+  fetch('/user/follow/genre/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      genre_id: genreId,
-      genre_name: genreName
-    })
+    body: JSON.stringify({ genre_id: genreId })
   })
-  .then(response => {
-    if (response.ok) {
-      // Si la requête POST est réussie, appeler la fonction JavaScript pour afficher le message à l'utilisateur
-      followGenre(genreName);
-    } else {
-      // Si la requête échoue, afficher un message d'erreur à l'utilisateur
-      throw new Error('Erreur lors du suivi du genre');
-    }
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.message); // Afficher un message de confirmation ou d'erreur
+    displayFollowedGenres(); // Mettre à jour l'affichage de la bibliothèque
   })
   .catch(error => {
-    console.error('Erreur lors du suivi du genre:', error);
+    console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
+    // Gérer l'erreur de manière appropriée
   });
 }
+
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -242,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const FollowGenreButton = document.getElementById('FollowingAccessBtn');
 
   // Ajoutez un écouteur d'événement de clic au bouton
-  libraryButton.addEventListener('click', function() {
+  FollowGenreButton.addEventListener('click', function() {
       // Appelez la fonction displayLibrary lorsque le bouton est cliqué
       displayFollowedGenres();
   });
@@ -250,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function displayFollowedGenres() {
   // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
-  fetch('/user/follow/genre')
+  fetch('/user/following/genre')
     .then(response => response.json())
     .then(data => {
       const followedGenresContainer = document.getElementById('followed-genres-container');

@@ -32,3 +32,14 @@ function displayFollowedGenres() {
   
   document.addEventListener('DOMContentLoaded', displayFollowedGenres);
   
+
+  function followGenre(genreName) {
+    const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
+    if (!followedGenres.includes(genreName)) {
+      followedGenres.push(genreName);
+      localStorage.setItem('followedGenres', JSON.stringify(followedGenres));
+      alert(`You are now following the ${genreName} genre!`);
+    } else {
+      alert(`You are already following the ${genreName} genre.`);
+    }
+  }
