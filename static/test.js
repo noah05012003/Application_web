@@ -11,3 +11,24 @@ function addToLibrary(gameId) {
 
 //<button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
 //<li><a href="/home">HOME</button></a></li>
+
+
+function displayFollowedGenres() {
+    const followedGenresContainer = document.getElementById('followed-genres-container');
+    const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
+  
+    followedGenresContainer.innerHTML = ''; 
+    if (followedGenres.length === 0) {
+      followedGenresContainer.innerHTML = '<p>You are not following any genres.</p>';
+    } else {
+      followedGenres.forEach(genreName => {
+        const genreCard = document.createElement('div');
+        genreCard.className = 'followed-genre-card';
+        genreCard.textContent = genreName;
+        followedGenresContainer.appendChild(genreCard);
+      });
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', displayFollowedGenres);
+  
