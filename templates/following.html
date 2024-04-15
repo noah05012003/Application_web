@@ -9,16 +9,16 @@
     <style>
       .flash-messages {
         position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 300px;
-        background-color: #f5f0f0;
-        color: #eb1228;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(205, 11, 11, 0.1);
-        z-index: 1000;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
       }
   
       .flash-message {
@@ -47,16 +47,13 @@
               {% endfor %}
           {% endif %}
       {% endwith %}
-  </div>
+    </div>
     <header>
       <div class="menu">
         <ul>
           <li><a href="/home">HOME</button></a></li>
           <li><a href="/reviews">REVIEWS</button></a></li>
-<<<<<<< Updated upstream
-=======
-          <li><a href="/following" onclick="displayFollowedGenres()">FOLLOWING</button></a></li>
->>>>>>> Stashed changes
+          <li><a href="#" onclick="displayFollowedGenres();return false;" ondblclick="displayFollowedPlatform();return false;">FOLLOWING</a></li>
           <li><a href="/genre">GENRES</button></a></li>
           <li><a href="/platforms">PLATFORMES</button></a></li>
         </ul>
@@ -70,15 +67,16 @@
           <button id="deleteUserBtn" type="button" class="btn btn-outline-primary">DELETE ACCOUNT</button>
         </form>
       </div>
-<<<<<<< Updated upstream
+      
+    </header>
+    <main>
       <h1>FOLLOWING</h1>
 
-=======
->>>>>>> Stashed changes
-      <div id="followed-genres-container" class="followed-genre-card"></div>
+      <div id="followed-genres-container" class="followed-genre-grid"></div>
+      <div id="followed-platforms-container" class="followed-platform-grid"></div>
+      
     
-    </header>
-    <main></main>
+    </main>
     <footer></footer>
     <script src="/static/script.js"></script>
     <script

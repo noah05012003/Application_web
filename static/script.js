@@ -243,7 +243,7 @@ function displayFollowedGenres() {
       // Parcourir les genres de la bibliothèque et les afficher dans la bibliothèque
       data.genres.forEach(genre => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails du genre par son ID
-        fetch(`https://api.rawg.io/api/genres/${genre.genre_name}?key=86a34209259b4dd496f0989055c1711b`)
+        fetch(`https://api.rawg.io/api/genres/${genre.genre_id}?key=86a34209259b4dd496f0989055c1711b`)
           .then(response => response.json())
           .then(genreDetails => {
             // Créer les éléments HTML pour afficher les détails du genre
@@ -251,7 +251,7 @@ function displayFollowedGenres() {
             genreCard.className = 'genre-card';
 
             genreCard.innerHTML = `
-              <img src="${genreDetails.background_image}" alt="${genreDetails.name}" class="genre-image">
+              <img src="${genreDetails.image_background}" alt="${genreDetails.name}" class="genre-image">
               <div class="genre-content">
                 <h3 class="genre-title">${genreDetails.name}</h3>
                 <input type="hidden" class="genre-id" value="${genre.id}"> 
@@ -411,8 +411,103 @@ function displayLibrary() {
   });
 });
 
+function Following(platformId) {
+  fetch('/user/follow/platform', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ platform_id: platformId})
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.message); // Afficher un message de confirmation ou d'erreur
+    displayFollowedPlatform(); // Mettre à jour l'affichage de la bibliothèque
+    alert(`You are now following the ${platformId} genre!`);
+  })
+  .catch(error => {
+    console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
+    alert(`Error following the ${platformId} genre.`);
+  });
+}
 
-<<<<<<< Updated upstream
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sélectionnez le bouton LIBRARY
+  const FollowPlatformButton = document.getElementById('FollowingPlatformAccessBtn');
+
+  // Ajoutez un écouteur d'événement de clic au bouton
+  FollowPlatformButton.addEventListener('click', function() {
+      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
+      displayFollowedPlatform();
+  });
+});
+
+function displayFollowedPlatform() {
+  // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
+  fetch('/user/following/platform')
+    .then(response => response.json())
+    .then(data => {
+      const followedPlatformContainer = document.getElementById('followed-platforms-container');
+      followedPlatformContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
+
+      // Parcourir les genres de la bibliothèque et les afficher dans la bibliothèque
+      data.platforms.forEach(platform => {
+        // Faites une requête à l'API Rawg.io pour obtenir les détails du genre par son ID
+        fetch(`https://api.rawg.io/api/platforms/${platform.platform_id}?key=86a34209259b4dd496f0989055c1711b`)
+          .then(response => response.json())
+          .then(platformDetails => {
+            // Créer les éléments HTML pour afficher les détails du genre
+            const platformCard = document.createElement('div');
+            platformCard.className = 'paltform-card';
+
+            platformCard.innerHTML = `
+              <img src="${platformDetails.image_background}" alt="${platformDetails.name}">
+              <div class="platform-card-content">
+                <h3>${platformDetails.name}</h3>
+                <input type="hidden" class="platform-id" value="${platform.id}"> 
+                <p>Date Added: ${platform.date_added}</p>
+                <button onclick="UnfollowPlatform('${platform.id}')" class="btn-follow">UnFollow</button>
+              </div>
+            `;
+
+            followedPlatformContainer.appendChild(platformCard); // Ajoute le genre  
+
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération des détails du jeu:', error);
+          });
+      });
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des jeux de la bibliothèque:', error);
+    });
+}
+
+function UnfollowPlatform(platformId) {
+  // Faites une requête pour supprimer le jeu de la bibliothèque de l'utilisateur
+  fetch('/user/remove/platform', {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ platform_id: platformId })
+  
+  })
+  .then(response => response.json())
+  .then(data => {
+      // Affichez un message à l'utilisateur pour indiquer si le jeu a été supprimé avec succès ou non
+      console.log(data.message);
+      // Actualisez la bibliothèque de l'utilisateur ou effectuez d'autres actions en fonction de la réponse
+      // Par exemple, vous pouvez actualiser la page ou mettre à jour l'interface utilisateur
+      window.location.reload();
+  })
+  .catch(error => {
+      console.error('Erreur lors de la suppression du jeu de la bibliothèque:', error);
+  });
+}
+
 
 
 /*reveiws*/
@@ -470,5 +565,3 @@ function displayAllReviews() {
 }
 
 document.addEventListener('DOMContentLoaded', displayAllReviews);
-=======
->>>>>>> Stashed changes

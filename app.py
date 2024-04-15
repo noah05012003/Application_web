@@ -274,6 +274,7 @@ def get_following():
             for genre in following:
                 response["genres"].append(
                     {
+                        "genre_id": genre[1],
                         "genre_name": genre[2], 
                         "date_added": genre[3],
                     }
@@ -323,7 +324,7 @@ def follow_platform():
     try:
         user_id = session.get("user_id")
         platform_id = request.json.get("platform_id")
-        sql_command = "INSERT INTO Following_Genre(user_id,platform_id) VALUES(%s,%s);"
+        sql_command = "INSERT INTO Following_Platform(user_id,platform_id) VALUES(%s,%s);"
         cursor.execute(sql_command,(user_id,platform_id,))
         cnx.commit()
         if cursor.rowcount == 0:

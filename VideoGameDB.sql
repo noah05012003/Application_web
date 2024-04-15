@@ -77,6 +77,7 @@ SELECT * FROM `Following_Genre`;
 SELECT * FROM `Library`;
 SELECT * FROM `Genres`;
 
+SELECT * FROM `Following_Platform`;
 
 
 
