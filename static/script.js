@@ -228,26 +228,6 @@ document.addEventListener('DOMContentLoaded', displayFollowedGenres);
 
 
 
-// Fonction Javascript qui est relié à la fonction flask 
-function addToLibrary(gameId) {
-  fetch('/user/add/game/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ game_id: gameId })
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert(data.message);  // Show success or error message
-  })
-  .catch(error => {
-    console.error('Error adding game to the library:', error);
-  });
-}
-
-
-
 function displayUserRating(gameId) {
   const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
   // La note de l'utilisateur sera affichée dans un élément span avec une classe spécifique pour le style
@@ -347,8 +327,7 @@ function displayLibrary() {
           platformCard.innerHTML = `
               <img src="${platform.image_background}" alt="${platform.name}">
               <h3>${platform.name}</h3>
-              <button onclick="Following('${platform.name}')"class="btn-follow">Following</button>
-
+              <button onclick="followPlatforms('${platform.name}')" class="btn-follow">Follow</button>
           `;
 
           platformsContainer.appendChild(platformCard);

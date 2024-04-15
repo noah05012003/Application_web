@@ -189,3 +189,5 @@ DELIMITER;
 
 
 SELECT * FROM `Users`;
+SELECT * FROM `Following`;
+SELECT * FROM `Library`;
