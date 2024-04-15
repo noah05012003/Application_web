@@ -49,7 +49,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
           <div class="game-actions">
             <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
             <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
-            <button onclick="writeReview('${game.id}')" class="btn-review">Write Review</button>
+            <button onclick="writeReview('${game.id}')" class="btn-review">Add Review</button>
 
             </div>
         </div>`;
@@ -94,7 +94,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
                 <div class="game-actions">
                   <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
                   <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
-                  <button onclick="writeReview('${game.id}')" class="btn-review">Write Review</button>
+                  <button onclick="writeReview('${game.id}')" class="btn-review">Add Review</button>
 
                 </div>
               </div>`;
@@ -400,7 +400,7 @@ function displayLibrary() {
               <h3>${platform.name}</h3>
               <input type="hidden" class="platform-id" value="${platform.id}"> 
               <button onclick="Following('${platform.id}')"class="btn-follow">Following</button>
-
+            </div>
           `;
 
           platformsContainer.appendChild(platformCard);
@@ -445,26 +445,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function displayFollowedPlatform() {
-  // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
+  // Faites une requête pour obtenir les plateformes de la bibliothèque de l'utilisateur depuis le serveur
   fetch('/user/following/platform')
     .then(response => response.json())
     .then(data => {
       const followedPlatformContainer = document.getElementById('followed-platforms-container');
       followedPlatformContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
 
-      // Parcourir les genres de la bibliothèque et les afficher dans la bibliothèque
+      // Parcourir les plateformes de la bibliothèque et les afficher dans la bibliothèque
       data.platforms.forEach(platform => {
-        // Faites une requête à l'API Rawg.io pour obtenir les détails du genre par son ID
+        // Faites une requête à l'API Rawg.io pour obtenir les détails de la plateforme par son ID
         fetch(`https://api.rawg.io/api/platforms/${platform.platform_id}?key=86a34209259b4dd496f0989055c1711b`)
           .then(response => response.json())
           .then(platformDetails => {
-            // Créer les éléments HTML pour afficher les détails du genre
+            // Créer les éléments HTML pour afficher les détails de la plateforme
             const platformCard = document.createElement('div');
-            platformCard.className = 'paltform-card';
+            platformCard.className = 'platform-card';
 
             platformCard.innerHTML = `
-              <img src="${platformDetails.image_background}" alt="${platformDetails.name}">
               <div class="platform-card-content">
+                <img src="${platformDetails.image_background}" alt="${platformDetails.name}">
                 <h3>${platformDetails.name}</h3>
                 <input type="hidden" class="platform-id" value="${platform.id}"> 
                 <p>Date Added: ${platform.date_added}</p>
@@ -472,7 +472,7 @@ function displayFollowedPlatform() {
               </div>
             `;
 
-            followedPlatformContainer.appendChild(platformCard); // Ajoute le genre  
+            followedPlatformContainer.appendChild(platformCard); // Ajoute la platrforme 
 
           })
           .catch(error => {
@@ -551,8 +551,37 @@ function displayReview(gameId, nameGame, userRating, userComment) {
     <h4>Avis pour le jeu ID ${gameId}</h4>
     <p>Note: ${userRating}</p>
     <p>Commentaire: ${userComment}</p>
+    <button onclick="DeleteReview('${gameId}')" class="btn-follow">Delete Review</button>
+
   `;
   reviewsContainer.appendChild(reviewElement);
+}
+
+function deleteReview(gameId) {
+  // Envoyer une requête DELETE à votre endpoint Flask pour supprimer la critique
+  fetch('/delete_review', {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ game_id: gameId })
+  })
+  .then(response => {
+      if (response.ok) {
+          // Si la suppression réussit, retirer l'élément HTML correspondant à la critique supprimée de l'interface utilisateur
+          const reviewElement = document.getElementById(`review-${gameId}`);
+          if (reviewElement) {
+              reviewElement.remove();
+          }
+          alert('Critique supprimée avec succès!');
+      } else {
+          throw new Error('Échec de la suppression de la critique');
+      }
+  })
+  .catch(error => {
+      console.error('Erreur lors de la suppression de la critique:', error);
+      alert('Une erreur s\'est produite lors de la suppression de la critique. Veuillez réessayer.');
+  });
 }
 
 // Cette fonction doit être appelée pour afficher tous les avis au chargement de la page "reviews.html"

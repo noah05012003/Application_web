@@ -26,7 +26,7 @@ def login():
 def signUp():
     return render_template("signUp.html")
 
-@app.route("/following")
+@app.route("/following", methods=['GET','POST','DELETE'])
 def following():
     return render_template("following.html",profile = session)
 
@@ -34,11 +34,11 @@ def following():
 def library():
     return render_template("library.html",profile = session)
 
-@app.route("/genre")
+@app.route("/genre", methods=['GET','POST','DELETE'])
 def genre():
     return render_template("genres.html",profile = session)
 
-@app.route("/platforms")
+@app.route("/platforms", methods=['GET','POST','DELETE'])
 def platforms():
     return render_template("platforms.html",profile = session)
     
@@ -207,6 +207,7 @@ def get_library():
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
+#Supprimer un jeu de la library de l'utilisateur(#OK)
 @app.route("/user/remove/game",methods=['DELETE'])
 def remove_game():
     try:
@@ -240,7 +241,7 @@ def remove_game():
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
-    
+#Ajouter un genre dans la following list (#OK)   
 @app.route("/user/follow/genre",methods=['POST'])
 def follow_genre():
     try:
@@ -262,7 +263,7 @@ def follow_genre():
         print("Erreur MYSQL:",err)
         return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
     
-#Obtenir la following list
+#Obtenir la following list(#OK)
 @app.route("/user/following/genre", methods=['GET'])
 def get_following():
     try:
@@ -284,7 +285,8 @@ def get_following():
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
-    
+
+#Retirer un genre de la following list (#OK)   
 @app.route("/user/remove/genre",methods=['DELETE'])
 def remove_genre():
     try:
@@ -318,7 +320,7 @@ def remove_genre():
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
-   
+#Ajouter une plateforme à la following list (#OK)  
 @app.route("/user/follow/platform",methods=['POST'])
 def follow_platform():
     try:
@@ -339,7 +341,7 @@ def follow_platform():
         print("Erreur MYSQL:",err)
         return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
     
-#Obtenir la following list
+
 @app.route("/user/following/platform", methods=['GET'])
 def get_following_platform():
     try:
@@ -351,7 +353,7 @@ def get_following_platform():
             for platform in following:
                 response["platforms"].append(
                     {
-                        "paltform_id": platform[1], 
+                        "platform_id": platform[1], 
                         "date_added": platform[2],
                     }
                 )
@@ -368,7 +370,7 @@ def remove_platform():
         user_id = session.get("user_id")
         cursor.execute("SELECT * FROM Following_Platform WHERE user_id = %s;", (user_id,))
         following_user = cursor.fetchall()
-        response = {"paltforms": []}
+        response = {"platforms": []}
         if following_user:
             for platform in following_user:
                 response["platforms"].append(
@@ -376,11 +378,11 @@ def remove_platform():
                         "platform_id":platform[1],
                     }
                 )
-        if response["genres"]:
-            platform_id = response["platforms"][0]["plaform_id"]
+        if response["platforms"]:
+            platform_id = response["platforms"][0]["platform_id"]
         else:
             print("la liste est vide")
-        sql_command = "CALL remove_genre(%s,%s);"
+        sql_command = "CALL remove_platform(%s,%s);"
         cursor.execute(sql_command,(user_id,platform_id,))
         cnx.commit()
         if cursor.rowcount == 1:
@@ -393,8 +395,44 @@ def remove_platform():
     except mysql.connector.Error as err:
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
+ 
+#Ajouter une review (#OK)   
+@app.route("/save_review", methods=['POST'])
+def save_review():
+    try:
+        # Récupérer les données envoyées par le client
+        user_id = session.get("user_id")
+        review_data = request.json
+
+        # Extraire les informations de l'avis
+        game_id = review_data.get('game_id')
+        user_rating = review_data.get('user_rating')
+        user_comment = review_data.get('user_comment')
+
+        sql_command = "INSERT INTO Reviews(game_id,user_id,comment,review_rating) VALUES(%s,%s,%s,%s);"
+        cursor.execute(sql_command,(game_id,user_id,user_comment,user_rating,))
+        cnx.commit()
+
+        # Réponse JSON pour confirmer la sauvegarde
+        return jsonify({"message": "Review saved successfully"}), 200
+    except Exception as e:
+        # En cas d'erreur, renvoyer une réponse d'erreur
+        return jsonify({"message": str(e)}), 500 
     
-    
+#Supprimer une review(#OK)
+@app.route("/delete_review", methods=['DELETE'])
+def delete_review():
+    try:
+        # Récupérer l'ID du jeu à partir des données JSON envoyées par le client
+        game_id = request.json.get('game_id')
+        cursor.execute("DELETE FROM Reviews WHERE game_id = %s", (game_id,))
+        cnx.commit()
+
+        # Répondre avec un message de confirmation
+        return jsonify({"message": "Critique supprimée avec succès"}), 200
+    except Exception as e:
+        # En cas d'erreur, renvoyer une réponse d'erreur
+        return jsonify({"message": str(e)}), 500
 
 
     

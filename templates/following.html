@@ -53,7 +53,6 @@
         <ul>
           <li><a href="/home">HOME</button></a></li>
           <li><a href="/reviews">REVIEWS</button></a></li>
-          <li><a href="#" onclick="displayFollowedGenres();return false;" ondblclick="displayFollowedPlatform();return false;">FOLLOWING</a></li>
           <li><a href="/genre">GENRES</button></a></li>
           <li><a href="/platforms">PLATFORMES</button></a></li>
         </ul>
@@ -62,6 +61,8 @@
         <h1>VGBD</h1>
         <form id="search-form">
           <input type="text" id="search-input" placeholder="search-VGBD" />
+          <button type="button" class="btn btn-outline-primary" onclick="displayFollowedGenres();return false;">Load Genres</button>
+          <button type="button" class="btn btn-outline-primary" onclick="displayFollowedPlatform();return false;">Load platforms</button>
           <a href="/library" ><button type="button" class="btn btn-outline-primary">LIBRARY</button></a>
           <a href="/logout"><button type="button" class="btn btn-outline-primary">LOGOUT</button></a>
           <button id="deleteUserBtn" type="button" class="btn btn-outline-primary">DELETE ACCOUNT</button>
@@ -72,8 +73,8 @@
     <main>
       <h1>FOLLOWING</h1>
 
-      <div id="followed-genres-container" class="followed-genre-grid"></div>
-      <div id="followed-platforms-container" class="followed-platform-grid"></div>
+      <div id="followed-genres-container" class="followed-genre-grid"></div> <div id="followed-platforms-container" class="followed-platform-grid"></div>
+      
       
     
     </main>
