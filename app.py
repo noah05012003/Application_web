@@ -247,8 +247,8 @@ def follow_genre():
         user_id = session.get("user_id")
         genre_id = request.json.get('genre_id')
         genre_name = request.json.get('genre_name')
-        sql_command = "INSERT INTO Following(user_id,genre_id) VALUES(%s,%s);"
-        cursor.execute(sql_command,(user_id,genre_id,))
+        sql_command = "INSERT INTO Following(user_id,genre_id,genre_name) VALUES(%s,%s,%s);"
+        cursor.execute(sql_command,(user_id,genre_id,genre_name))
         cnx.commit()
         if cursor.rowcount == 0:
             flash("Le genre est déjà follow", category= 'error')
