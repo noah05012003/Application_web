@@ -46,10 +46,11 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
           <div class="game-ratings">
             <span class="global-rating">Global Rating: ${game.rating}</span>
             ${userRatingHtml} <!-- Insérer la note de l'utilisateur ici -->
-          </div>
           <div class="game-actions">
             <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
             <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
+            <button onclick="writeReview('${game.id}')" class="btn-review">Write Review</button>
+
             </div>
         </div>`;
 
@@ -93,6 +94,8 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
                 <div class="game-actions">
                   <button onclick="rateGame('${game.id}')" class="btn-rate">Rate</button>
                   <button onclick="addToLibrary('${game.id}')" class="btn-add">Add to Library</button>
+                  <button onclick="writeReview('${game.id}')" class="btn-review">Write Review</button>
+
                 </div>
               </div>`;
         
@@ -292,7 +295,6 @@ function displayFollowedGenres() {
 
 function displayUserRating(gameId) {
   const ratings = JSON.parse(localStorage.getItem('userRatings')) || {};
-  // La note de l'utilisateur sera affichée dans un élément span avec une classe spécifique pour le style
   return ratings[gameId] ? `<span class="user-rating">Your Rating: ${ratings[gameId]}</span>` : '<span class="no-rating">Rate this game</span>';
 }
 
@@ -402,3 +404,61 @@ function displayLibrary() {
   });
 });
 
+
+
+
+/*reveiws*/
+// Ajouter un commentaire et une note pour un jeu
+function writeReview(gameId) {
+  // Demander à l'utilisateur de saisir le nom du jeu
+  const nameGame = prompt('Nom du jeu :', '');
+  // Demander à l'utilisateur de saisir une note
+  const userRating = prompt('Notez le jeu (1-5) :', '');
+  // Demander à l'utilisateur de saisir un commentaire
+  const userComment = prompt('Commentaire sur le jeu :', '');
+  
+
+  // Vérifier si la note est valide et si le commentaire est non vide
+  if (userRating >= 1 && userRating <= 5 && userComment && nameGame) {
+    // Récupérer les commentaires existants depuis le localStorage ou créer un nouvel objet si aucun commentaire n'existe
+    const reviews = JSON.parse(localStorage.getItem('userReviews')) || {};
+    // Ajouter la note, le commentaire et le nom du jeu au jeu correspondant
+    reviews[gameId] = {
+      name: nameGame,
+      rating: userRating,
+      comment: userComment
+    };
+    // Enregistrer les commentaires mis à jour dans le localStorage
+    localStorage.setItem('userReviews', JSON.stringify(reviews));
+    // Afficher les informations mises à jour
+    displayReview(gameId, nameGame, userRating, userComment);
+  } else {
+    alert('Note invalide, commentaire manquant ou nom du jeu non spécifié. Veuillez vérifier vos saisies.');
+  }
+}
+
+// Afficher la note et le commentaire de l'utilisateur pour un jeu sur la page "reviews.html"
+function displayReview(gameId, nameGame, userRating, userComment) {
+  // Supposons que nous avons un conteneur pour les avis sur la page "reviews.html"
+  const reviewsContainer = document.getElementById('reviews-container');
+  const reviewElement = document.createElement('div');
+  reviewElement.className = 'user-review';
+  reviewElement.innerHTML = `
+    <h3 class="game-title">${nameGame}</h3>
+    <h4>Avis pour le jeu ID ${gameId}</h4>
+    <p>Note: ${userRating}</p>
+    <p>Commentaire: ${userComment}</p>
+  `;
+  reviewsContainer.appendChild(reviewElement);
+}
+
+// Cette fonction doit être appelée pour afficher tous les avis au chargement de la page "reviews.html"
+function displayAllReviews() {
+  const reviews = JSON.parse(localStorage.getItem('userReviews')) || {};
+  Object.keys(reviews).forEach(gameId => {
+    const review = reviews[gameId];
+    displayReview(gameId, review.name, review.rating, review.comment);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', displayAllReviews);
