@@ -347,6 +347,8 @@ function displayLibrary() {
           platformCard.innerHTML = `
               <img src="${platform.image_background}" alt="${platform.name}">
               <h3>${platform.name}</h3>
+              <button onclick="Following('${platform.name}')"class="btn-follow">Following</button>
+
           `;
 
           platformsContainer.appendChild(platformCard);
