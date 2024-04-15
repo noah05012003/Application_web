@@ -241,7 +241,7 @@ def remove_game():
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
     
-@app.route("user/follow/genre",methods=['POST'])
+@app.route("/user/follow/genre",methods=['POST'])
 def follow_genre():
     try:
         user_id = session.get("user_id")
