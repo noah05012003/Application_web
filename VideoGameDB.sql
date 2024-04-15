@@ -62,16 +62,35 @@ CREATE TABLE Reviews (
 
 
 
-CREATE TABLE Following (
+CREATE TABLE Following_Genre(
   user_id INTEGER,
   genre_id INTEGER,
-  platform_id INTEGER,
+  genre_name VARCHAR(100) UNIQUE NOT NULL,
   date_followed DATETIME DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (user_id,genre_id,platform_id),
+  PRIMARY KEY (user_id,genre_id),
   FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
   FOREIGN KEY (genre_id) REFERENCES Genres (genre_id)  ON DELETE CASCADE ON UPDATE NO ACTION,
-  FOREIGN KEY (platform_id) REFERENCES Platforms (platform_id) ON DELETE CASCADE ON UPDATE NO ACTION
+  FOREIGN KEY (genre_name) REFERENCES Genres (genre_name) ON DELETE CASCADE ON UPDATE NO ACTION
 );
+
+SELECT * FROM `Following_Genre`;
+SELECT * FROM `Library`;
+SELECT * FROM `Genres`;
+
+
+
+
+
+CREATE TABLE Following_Platform(
+  user_id INTEGER,
+  platform_id INTEGER,
+  date_followed DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(user_id,platform_id),
+  FOREIGN KEY(user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION,
+  FOREIGN KEY (platform_id) REFERENCES Platforms(platform_id) ON DELETE CASCADE ON UPDATE NO ACTION
+);
+  
+
 
 
 
@@ -173,7 +192,7 @@ DELIMITER;
 --Procedure pour Retirer un genre ou une platforme
 CREATE PROCEDURE remove_genre(IN p_user_id INTEGER , IN p_genre_id INTEGER)
 BEGIN
-      DELETE FROM Following WHERE user_id = p_user_id AND genre_id = p_genre_id;
+      DELETE FROM `Following_Genre` WHERE user_id = p_user_id AND genre_id = p_genre_id;
 END//
 
 DELIMITER;
@@ -184,6 +203,8 @@ DELIMITER;
 
 
 SELECT * FROM `Users`;
-SELECT * FROM `Following`;
-SELECT * FROM `Library`;
+
+SELECT * FROM `Following_Genre`;
+
+
 

@@ -34,6 +34,13 @@ function displayFollowedGenres() {
   
 
   function followGenre(genreName) {
+    fetch('/user/follow/genre/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ genre_name: genreName })
+    })
     const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
     if (!followedGenres.includes(genreName)) {
       followedGenres.push(genreName);

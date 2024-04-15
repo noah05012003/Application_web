@@ -245,16 +245,16 @@ def remove_game():
 def follow_genre():
     try:
         user_id = session.get("user_id")
-        genre_id = request.json.get('genre_id')
+        genre_id = request.json.get("genre_id")
         genre_name = request.json.get('genre_name')
-        sql_command = "INSERT INTO Following(user_id,genre_id,genre_name) VALUES(%s,%s,%s);"
-        cursor.execute(sql_command,(user_id,genre_id,genre_name))
+        sql_command = "INSERT INTO Following_Genre(user_id,genre_id,genre_name) VALUES(%s,%s,%s);"
+        cursor.execute(sql_command,(user_id,genre_id,genre_name,))
         cnx.commit()
         if cursor.rowcount == 0:
             flash("Le genre est déjà follow", category= 'error')
             return jsonify({"message":"Le jeu est déjà follow"}),200
         else:
-            flash("Le jeu à bien été ajouté ",category= 'success')
+            flash("Le genre à bien été ajouté ",category= 'success')
             return jsonify({"message":"Le genre a bien été follow "}),201
         
         
@@ -267,14 +267,14 @@ def follow_genre():
 def get_following():
     try:
         user_id = session.get("user_id")
-        cursor.execute("SELECT * FROM Following WHERE user_id = %s;", (user_id,))
-        library = cursor.fetchall()
+        cursor.execute("SELECT * FROM Following_Genre WHERE user_id = %s;", (user_id,))
+        following = cursor.fetchall()
         response = {"genres": []}
-        if library:
-            for genre in library:
+        if following:
+            for genre in following:
                 response["genres"].append(
                     {
-                        "genre_id": genre[1], 
+                        "genre_name": genre[2], 
                         "date_added": genre[3],
                     }
                 )
@@ -289,9 +289,9 @@ def remove_genre():
     try:
         
         user_id = session.get("user_id")
-        cursor.execute("SELECT * FROM Following WHERE user_id = %s;", (user_id,))
+        cursor.execute("SELECT * FROM Following_Genre WHERE user_id = %s;", (user_id,))
         following_user = cursor.fetchall()
-        response = {"genres":[]}
+        response = {"genres": []}
         if following_user:
             for genre in following_user:
                 response["genres"].append(
@@ -311,13 +311,87 @@ def remove_genre():
             return render_template("home.html",profile = session)
         else:
             flash("Le genre n'a pas été surpprimé de votre library", category= 'error')
-            return jsonify({"message":f"Le jeu avec l'ID {genre_id} n'a pas été supprimé de votre library"}),500
+            return jsonify({"message":f"Le genre avec l'ID {genre_id} n'a pas été supprimé de votre library"}),500
         
     except mysql.connector.Error as err:
         print("Erreur MYSQL:", err)
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
    
+@app.route("/user/follow/platform",methods=['POST'])
+def follow_platform():
+    try:
+        user_id = session.get("user_id")
+        platform_id = request.json.get("platform_id")
+        sql_command = "INSERT INTO Following_Genre(user_id,platform_id) VALUES(%s,%s);"
+        cursor.execute(sql_command,(user_id,platform_id,))
+        cnx.commit()
+        if cursor.rowcount == 0:
+            flash("La platforme est déjà follow", category= 'error')
+            return jsonify({"message":"La platforme est déjà follow"}),200
+        else:
+            flash("La platforme à bien été ajouté ",category= 'success')
+            return jsonify({"message":"La platforme a bien été follow "}),201
+        
+        
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:",err)
+        return jsonify({"message":"Erreur lors de l'ajout du jeu"}),500
+    
+#Obtenir la following list
+@app.route("/user/following/platform", methods=['GET'])
+def get_following_platform():
+    try:
+        user_id = session.get("user_id")
+        cursor.execute("SELECT * FROM Following_Platform WHERE user_id = %s;", (user_id,))
+        following = cursor.fetchall()
+        response = {"platforms": []}
+        if following:
+            for platform in following:
+                response["platforms"].append(
+                    {
+                        "paltform_id": platform[1], 
+                        "date_added": platform[2],
+                    }
+                )
+        return jsonify(response), 200
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:", err)
+        return jsonify({"message": "Erreur dans la base de donnée"}), 500
+    
+    
+@app.route("/user/remove/paltform",methods=['DELETE'])
+def remove_platform():
+    try:
+        
+        user_id = session.get("user_id")
+        cursor.execute("SELECT * FROM Following_Platform WHERE user_id = %s;", (user_id,))
+        following_user = cursor.fetchall()
+        response = {"paltforms": []}
+        if following_user:
+            for platform in following_user:
+                response["platforms"].append(
+                    {
+                        "platform_id":platform[1],
+                    }
+                )
+        if response["genres"]:
+            platform_id = response["platforms"][0]["plaform_id"]
+        else:
+            print("la liste est vide")
+        sql_command = "CALL remove_genre(%s,%s);"
+        cursor.execute(sql_command,(user_id,platform_id,))
+        cnx.commit()
+        if cursor.rowcount == 1:
+            flash("La platforme à bien été supprimé", category= 'success')
+            return render_template("home.html",profile = session)
+        else:
+            flash("La platforme n'a pas été surpprimé de votre library", category= 'error')
+            return jsonify({"message":f"Le genre avec l'ID {platform_id} n'a pas été supprimé de votre library"}),500
+        
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:", err)
+        return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
     
 

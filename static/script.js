@@ -188,7 +188,7 @@ function fetchGenres() {
           <div class="genre-content">
             <h3 class="genre-title">${genre.name}</h3>
             <input type="hidden" class="genre-id" value="${genre.id}">
-            <button onclick="followGenre('${genre.name}')" class="btn-follow">Follow</button>
+            <button onclick="followGenre('${genre.id}','${genre.name}')" class="btn-follow">Follow</button>
           </div>
         `;
         genreContainer.appendChild(genreCard);
@@ -199,25 +199,25 @@ function fetchGenres() {
     });
 }
 
-function followedGenres(genreId) {
-  fetch('/user/follow/genre/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ genre_id: genreId })
+function followGenre(genreId, genreName) {
+  fetch('/user/follow/genre', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ genre_id: genreId, genre_name: genreName })
   })
   .then(response => response.json())
   .then(data => {
     console.log(data.message); // Afficher un message de confirmation ou d'erreur
     displayFollowedGenres(); // Mettre à jour l'affichage de la bibliothèque
+    alert(`You are now following the ${genreName} genre!`);
   })
   .catch(error => {
     console.error('Erreur lors de l\'ajout du jeu à la bibliothèque de l\'utilisateur:', error);
-    // Gérer l'erreur de manière appropriée
+    alert(`Error following the ${genreName} genre.`);
   });
 }
-
 
 
 
@@ -241,9 +241,9 @@ function displayFollowedGenres() {
       followedGenresContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
 
       // Parcourir les genres de la bibliothèque et les afficher dans la bibliothèque
-      data.results.forEach(genre => {
+      data.genres.forEach(genre => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails du genre par son ID
-        fetch(`https://api.rawg.io/api/games/${genre.genre_id}?key=86a34209259b4dd496f0989055c1711b`)
+        fetch(`https://api.rawg.io/api/genres/${genre.genre_name}?key=86a34209259b4dd496f0989055c1711b`)
           .then(response => response.json())
           .then(genreDetails => {
             // Créer les éléments HTML pour afficher les détails du genre
@@ -256,7 +256,7 @@ function displayFollowedGenres() {
                 <h3 class="genre-title">${genreDetails.name}</h3>
                 <input type="hidden" class="genre-id" value="${genre.id}"> 
                 <p>Date Added: ${genre.date_added}</p>
-                <button onclick="UnfollowGenre('${genre.name}')" class="btn-follow">UnFollow</button>
+                <button onclick="UnfollowGenre('${genre.id}')" class="btn-follow">UnFollow</button>
               </div>
             `;
 
@@ -273,6 +273,28 @@ function displayFollowedGenres() {
     });
 }
 
+function UnfollowGenre(genreId) {
+  // Faites une requête pour supprimer le jeu de la bibliothèque de l'utilisateur
+  fetch('/user/remove/genre', {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ genre_id: genreId })
+  
+  })
+  .then(response => response.json())
+  .then(data => {
+      // Affichez un message à l'utilisateur pour indiquer si le jeu a été supprimé avec succès ou non
+      console.log(data.message);
+      // Actualisez la bibliothèque de l'utilisateur ou effectuez d'autres actions en fonction de la réponse
+      // Par exemple, vous pouvez actualiser la page ou mettre à jour l'interface utilisateur
+      window.location.reload();
+  })
+  .catch(error => {
+      console.error('Erreur lors de la suppression du jeu de la bibliothèque:', error);
+  });
+}
 
 
 
@@ -327,7 +349,7 @@ function displayLibrary() {
       libraryContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
 
       // Parcourir les jeux de la bibliothèque et les afficher dans la bibliothèque
-      data.results.forEach(game => {
+      data.games.forEach(game => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails du jeu par son ID
         fetch(`https://api.rawg.io/api/games/${game.game_id}?key=86a34209259b4dd496f0989055c1711b`)
           .then(response => response.json())
@@ -376,7 +398,8 @@ function displayLibrary() {
             <div class = "platform-card-content">
               <img src="${platform.image_background}" alt="${platform.name}">
               <h3>${platform.name}</h3>
-              <button onclick="Following('${platform.name}')"class="btn-follow">Following</button>
+              <input type="hidden" class="platform-id" value="${platform.id}"> 
+              <button onclick="Following('${platform.id}')"class="btn-follow">Following</button>
 
           `;
 
@@ -389,6 +412,7 @@ function displayLibrary() {
 });
 
 
+<<<<<<< Updated upstream
 
 
 /*reveiws*/
@@ -446,3 +470,5 @@ function displayAllReviews() {
 }
 
 document.addEventListener('DOMContentLoaded', displayAllReviews);
+=======
+>>>>>>> Stashed changes
