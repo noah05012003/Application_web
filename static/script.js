@@ -184,6 +184,7 @@ function fetchGenres() {
           <img src="${genre.image_background}" alt="${genre.name}" class="genre-image">
           <div class="genre-content">
             <h3 class="genre-title">${genre.name}</h3>
+            <input type="hidden" class="genre-id" value="${genre.id}">
             <button onclick="followGenre('${genre.name}')" class="btn-follow">Follow</button>
           </div>
         `;
@@ -206,24 +207,85 @@ function followGenre(genreName) {
   }
 }
 
-function displayFollowedGenres() {
-  const followedGenresContainer = document.getElementById('followed-genres-container');
-  const followedGenres = JSON.parse(localStorage.getItem('followedGenres')) || [];
-
-  followedGenresContainer.innerHTML = ''; 
-  if (followedGenres.length === 0) {
-    followedGenresContainer.innerHTML = '<p>You are not following any genres.</p>';
-  } else {
-    followedGenres.forEach(genreName => {
-      const genreCard = document.createElement('div');
-      genreCard.className = 'followed-genre-card';
-      genreCard.textContent = genreName;
-      followedGenresContainer.appendChild(genreCard);
-    });
-  }
+//Envoyer une requête Json au serveur flask
+function followGenreRequest(genreId, genreName) {
+  fetch('/user/follow/genre', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      genre_id: genreId,
+      genre_name: genreName
+    })
+  })
+  .then(response => {
+    if (response.ok) {
+      // Si la requête POST est réussie, appeler la fonction JavaScript pour afficher le message à l'utilisateur
+      followGenre(genreName);
+    } else {
+      // Si la requête échoue, afficher un message d'erreur à l'utilisateur
+      throw new Error('Erreur lors du suivi du genre');
+    }
+  })
+  .catch(error => {
+    console.error('Erreur lors du suivi du genre:', error);
+  });
 }
 
-document.addEventListener('DOMContentLoaded', displayFollowedGenres);
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Sélectionnez le bouton LIBRARY
+  const FollowGenreButton = document.getElementById('FollowingAccessBtn');
+
+  // Ajoutez un écouteur d'événement de clic au bouton
+  libraryButton.addEventListener('click', function() {
+      // Appelez la fonction displayLibrary lorsque le bouton est cliqué
+      displayFollowedGenres();
+  });
+});
+
+function displayFollowedGenres() {
+  // Faites une requête pour obtenir les jeux de la bibliothèque de l'utilisateur depuis le serveur
+  fetch('/user/follow/genre')
+    .then(response => response.json())
+    .then(data => {
+      const followedGenresContainer = document.getElementById('followed-genres-container');
+      followedGenresContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
+
+      // Parcourir les genres de la bibliothèque et les afficher dans la bibliothèque
+      data.results.forEach(genre => {
+        // Faites une requête à l'API Rawg.io pour obtenir les détails du genre par son ID
+        fetch(`https://api.rawg.io/api/games/${genre.genre_id}?key=86a34209259b4dd496f0989055c1711b`)
+          .then(response => response.json())
+          .then(genreDetails => {
+            // Créer les éléments HTML pour afficher les détails du genre
+            const genreCard = document.createElement('div');
+            genreCard.className = 'genre-card';
+
+            genreCard.innerHTML = `
+              <img src="${genreDetails.background_image}" alt="${genreDetails.name}" class="genre-image">
+              <div class="genre-content">
+                <h3 class="genre-title">${genreDetails.name}</h3>
+                <input type="hidden" class="genre-id" value="${genre.id}"> 
+                <p>Date Added: ${genre.date_added}</p>
+                <button onclick="UnfollowGenre('${genre.name}')" class="btn-follow">UnFollow</button>
+              </div>
+            `;
+
+            followedGenresContainer.appendChild(genreCard); // Ajoute le genre  
+
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération des détails du jeu:', error);
+          });
+      });
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des jeux de la bibliothèque:', error);
+    });
+}
+
 
 
 
@@ -279,7 +341,7 @@ function displayLibrary() {
       libraryContainer.innerHTML = ''; // Efface le contenu précédent de la bibliothèque
 
       // Parcourir les jeux de la bibliothèque et les afficher dans la bibliothèque
-      data.games.forEach(game => {
+      data.results.forEach(game => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails du jeu par son ID
         fetch(`https://api.rawg.io/api/games/${game.game_id}?key=86a34209259b4dd496f0989055c1711b`)
           .then(response => response.json())

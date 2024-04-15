@@ -170,15 +170,10 @@ END//
 
 DELIMITER;
 
---Procedure pour follow un genre ou une platforme
-CREATE PROCEDURE follow_genre_platform(IN p_user_id INTEGER , IN p_genre_id INTEGER,IN p_platform_id INTEGER)
+--Procedure pour Retirer un genre ou une platforme
+CREATE PROCEDURE remove_genre(IN p_user_id INTEGER , IN p_genre_id INTEGER)
 BEGIN
-      IF EXISTS(SELECT * FROM `Following` WHERE user_id = p_user_id AND genre_id = p_genre_id AND platform_id = p_platform_id) THEN
-          SIGNAL SQLSTATE '45000'
-          SET MESSAGE_TEXT = 'Les genres et platformes sont déjà suivi';
-      ELSE
-          INSERT INTO `Following`(user_id,genre_id,platform_id,date_followed) VALUES(p_user_id,p_genre_id,p_platform_id,CURRENT_DATE());
-      END IF;
+      DELETE FROM Following WHERE user_id = p_user_id AND genre_id = p_genre_id;
 END//
 
 DELIMITER;
