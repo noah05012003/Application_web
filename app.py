@@ -363,7 +363,7 @@ def get_following_platform():
         return jsonify({"message": "Erreur dans la base de donnée"}), 500
     
     
-@app.route("/user/remove/paltform",methods=['DELETE'])
+@app.route("/user/remove/platform",methods=['DELETE'])
 def remove_platform():
     try:
         
@@ -423,16 +423,23 @@ def save_review():
 @app.route("/delete_review", methods=['DELETE'])
 def delete_review():
     try:
-        # Récupérer l'ID du jeu à partir des données JSON envoyées par le client
-        game_id = request.json.get('game_id')
-        cursor.execute("DELETE FROM Reviews WHERE game_id = %s", (game_id,))
+        
+        review_data = request.json
+        user_id = session.get("user_id")
+        game_id = review_data.get('game_id')
+        sql_command = "CALL remove_review(%s,%s);"
+        cursor.execute(sql_command,(user_id,game_id,))
         cnx.commit()
-
-        # Répondre avec un message de confirmation
-        return jsonify({"message": "Critique supprimée avec succès"}), 200
-    except Exception as e:
-        # En cas d'erreur, renvoyer une réponse d'erreur
-        return jsonify({"message": str(e)}), 500
+        if cursor.rowcount == 1:
+            flash("La platforme à bien été supprimé", category= 'success')
+            return render_template("home.html",profile = session)
+        else:
+            flash("La platforme n'a pas été surpprimé de votre library", category= 'error')
+            return jsonify({"message":f"Le genre avec l'ID {game_id} n'a pas été supprimé de votre library"}),500
+        
+    except mysql.connector.Error as err:
+        print("Erreur MYSQL:", err)
+        return jsonify({"message": "Erreur dans la base de donnée"}), 500
 
 
     

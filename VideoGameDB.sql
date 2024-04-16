@@ -14,10 +14,6 @@ CREATE TABLE Platforms (
   
 );
 
-SELECT * FROM `Users`;
-
-SELECT * FROM `Library`;
-
 
 
 CREATE TABLE Genres (
@@ -60,6 +56,8 @@ CREATE TABLE Reviews (
   FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
+SELECT * FROM `Reviews`;
+
 
 
 CREATE TABLE Following_Genre(
@@ -72,13 +70,6 @@ CREATE TABLE Following_Genre(
   FOREIGN KEY (genre_id) REFERENCES Genres (genre_id)  ON DELETE CASCADE ON UPDATE NO ACTION,
   FOREIGN KEY (genre_name) REFERENCES Genres (genre_name) ON DELETE CASCADE ON UPDATE NO ACTION
 );
-
-SELECT * FROM `Following_Genre`;
-SELECT * FROM `Library`;
-SELECT * FROM `Genres`;
-
-SELECT * FROM `Following_Platform`;
-
 
 
 
@@ -205,16 +196,20 @@ BEGIN
       DELETE FROM `Following_Platform` WHERE user_id = p_user_id AND platform_id = p_platform_id;
 END//
 
+
+DELIMITER;
+
+DELIMITER//
+
+CREATE PROCEDURE remove_review(IN p_user_id INTEGER , IN p_game_id INTEGER)
+BEGIN
+    DELETE FROM `Reviews` WHERE user_id = p_user_id AND game_id = p_game_id;
+END//
+
 DELIMITER;
 
 -- Nous n'avons donc pas besoin de trigger pour supprimer ou mettre à NULL les éléments
 -- d'une library/following list ou encore une review  si l'utilisateur est supprimé grâce
 -- à la présence des contraintes de référence.
-
-
-SELECT * FROM `Users`;
-
-SELECT * FROM `Following_Genre`;
-
 
 

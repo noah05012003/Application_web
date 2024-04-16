@@ -513,32 +513,38 @@ function UnfollowPlatform(platformId) {
 /*reveiws*/
 // Ajouter un commentaire et une note pour un jeu
 function writeReview(gameId) {
-  // Demander à l'utilisateur de saisir le nom du jeu
   const nameGame = prompt('Nom du jeu :', '');
-  // Demander à l'utilisateur de saisir une note
   const userRating = prompt('Notez le jeu (1-5) :', '');
-  // Demander à l'utilisateur de saisir un commentaire
   const userComment = prompt('Commentaire sur le jeu :', '');
-  
 
-  // Vérifier si la note est valide et si le commentaire est non vide
   if (userRating >= 1 && userRating <= 5 && userComment && nameGame) {
-    // Récupérer les commentaires existants depuis le localStorage ou créer un nouvel objet si aucun commentaire n'existe
-    const reviews = JSON.parse(localStorage.getItem('userReviews')) || {};
-    // Ajouter la note, le commentaire et le nom du jeu au jeu correspondant
-    reviews[gameId] = {
-      name: nameGame,
-      rating: userRating,
-      comment: userComment
+    const reviewData = {
+      game_id: gameId,
+      user_rating: userRating,
+      user_comment: userComment
     };
-    // Enregistrer les commentaires mis à jour dans le localStorage
-    localStorage.setItem('userReviews', JSON.stringify(reviews));
-    // Afficher les informations mises à jour
-    displayReview(gameId, nameGame, userRating, userComment);
+
+    fetch('/save_review', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reviewData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.message); // Afficher un message de confirmation ou d'erreur
+      displayReview(gameId,nameGame,userRating,userComment);
+      // Effectuer d'autres actions en fonction de la réponse, par exemple actualiser l'affichage des critiques
+    })
+    .catch(error => {
+      console.error('Erreur lors de l\'enregistrement de la critique:', error);
+    });
   } else {
     alert('Note invalide, commentaire manquant ou nom du jeu non spécifié. Veuillez vérifier vos saisies.');
   }
 }
+
 
 // Afficher la note et le commentaire de l'utilisateur pour un jeu sur la page "reviews.html"
 function displayReview(gameId, nameGame, userRating, userComment) {
@@ -566,23 +572,19 @@ function deleteReview(gameId) {
       },
       body: JSON.stringify({ game_id: gameId })
   })
-  .then(response => {
-      if (response.ok) {
-          // Si la suppression réussit, retirer l'élément HTML correspondant à la critique supprimée de l'interface utilisateur
-          const reviewElement = document.getElementById(`review-${gameId}`);
-          if (reviewElement) {
-              reviewElement.remove();
-          }
-          alert('Critique supprimée avec succès!');
-      } else {
-          throw new Error('Échec de la suppression de la critique');
-      }
+  .then(response => response.json())
+  .then(data => {
+      // Affichez un message à l'utilisateur pour indiquer si le jeu a été supprimé avec succès ou non
+      console.log(data.message);
+      // Actualisez la bibliothèque de l'utilisateur ou effectuez d'autres actions en fonction de la réponse
+      // Par exemple, vous pouvez actualiser la page ou mettre à jour l'interface utilisateur
+      window.location.reload();
   })
   .catch(error => {
-      console.error('Erreur lors de la suppression de la critique:', error);
-      alert('Une erreur s\'est produite lors de la suppression de la critique. Veuillez réessayer.');
+      console.error('Erreur lors de la suppression du jeu de la bibliothèque:', error);
   });
 }
+
 
 // Cette fonction doit être appelée pour afficher tous les avis au chargement de la page "reviews.html"
 function displayAllReviews() {

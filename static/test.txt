@@ -1,0 +1,27 @@
+function writeReview(gameId) {
+  // Demander à l'utilisateur de saisir le nom du jeu
+  const nameGame = prompt('Nom du jeu :', '');
+  // Demander à l'utilisateur de saisir une note
+  const userRating = prompt('Notez le jeu (1-5) :', '');
+  // Demander à l'utilisateur de saisir un commentaire
+  const userComment = prompt('Commentaire sur le jeu :', '');
+  
+
+  // Vérifier si la note est valide et si le commentaire est non vide
+  if (userRating >= 1 && userRating <= 5 && userComment && nameGame) {
+    // Récupérer les commentaires existants depuis le localStorage ou créer un nouvel objet si aucun commentaire n'existe
+    const reviews = JSON.parse(localStorage.getItem('userReviews')) || {};
+    // Ajouter la note, le commentaire et le nom du jeu au jeu correspondant
+    reviews[gameId] = {
+      name: nameGame,
+      rating: userRating,
+      comment: userComment
+    };
+    // Enregistrer les commentaires mis à jour dans le localStorage
+    localStorage.setItem('userReviews', JSON.stringify(reviews));
+    // Afficher les informations mises à jour
+    displayReview(gameId, nameGame, userRating, userComment);
+  } else {
+    alert('Note invalide, commentaire manquant ou nom du jeu non spécifié. Veuillez vérifier vos saisies.');
+  }
+}
