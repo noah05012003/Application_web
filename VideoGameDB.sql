@@ -213,5 +213,13 @@ DELIMITER;
 -- à la présence des contraintes de référence.
 
 
+SELECT * FROM `Users`;
+
+SELECT * FROM `Library`;
+
+SELECT * FROM `Following_Genre`;
+SELECT * FROM `Following_Platform`;
 
 SELECT * FROM `Reviews`;
+
+SELECT * FROM `Genres`;

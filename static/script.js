@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
+const api_key = "95b06a32875746309437e49918c0c61a";
+
+fetch('https://api.rawg.io/api/games?key=95b06a32875746309437e49918c0c61a')
   .then(response => response.json())
   .then(data => {
     const gamesContainer = document.getElementById('games-container');
@@ -72,7 +74,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
       return; // Si c'est le cas, ne chargez plus de jeux
     }
   
-    fetch(`https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b&page=${page}&page_size=20`) 
+    fetch(`https://api.rawg.io/api/games?key=95b06a32875746309437e49918c0c61a&page=${page}&page_size=20`) 
       .then(response => response.json())
       .then(data => {
         const gamesContainer = document.getElementById('games-container');
@@ -119,7 +121,7 @@ fetch('https://api.rawg.io/api/games?key=86a34209259b4dd496f0989055c1711b')
   loadGames(currentPage);
   
 
- const api_key = "86a34209259b4dd496f0989055c1711b"
+
 
  function rateGame(gameId) {
   const userRating = prompt('Rate the game (1-5):', '');
@@ -173,7 +175,7 @@ function displayUserRating(gameId) {
 document.addEventListener('DOMContentLoaded', fetchGenres);
 
 function fetchGenres() {
-  fetch('https://api.rawg.io/api/genres?key=86a34209259b4dd496f0989055c1711b')
+  fetch('https://api.rawg.io/api/genres?key=95b06a32875746309437e49918c0c61a')
     .then(response => response.json())
     .then(data => {
       const genreContainer = document.getElementById('genre-container');
@@ -243,7 +245,7 @@ function displayFollowedGenres() {
       // Parcourir les genres de la bibliothèque et les afficher dans la bibliothèque
       data.genres.forEach(genre => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails du genre par son ID
-        fetch(`https://api.rawg.io/api/genres/${genre.genre_id}?key=86a34209259b4dd496f0989055c1711b`)
+        fetch(`https://api.rawg.io/api/genres/${genre.genre_id}?key=95b06a32875746309437e49918c0c61a`)
           .then(response => response.json())
           .then(genreDetails => {
             // Créer les éléments HTML pour afficher les détails du genre
@@ -351,7 +353,7 @@ function displayLibrary() {
       // Parcourir les jeux de la bibliothèque et les afficher dans la bibliothèque
       data.games.forEach(game => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails du jeu par son ID
-        fetch(`https://api.rawg.io/api/games/${game.game_id}?key=86a34209259b4dd496f0989055c1711b`)
+        fetch(`https://api.rawg.io/api/games/${game.game_id}?key=95b06a32875746309437e49918c0c61a`)
           .then(response => response.json())
           .then(gameDetails => {
             // Créer les éléments HTML pour afficher les détails du jeu
@@ -385,7 +387,7 @@ function displayLibrary() {
 
  /*platforme*/
  document.addEventListener('DOMContentLoaded', function() {
-  fetch('https://api.rawg.io/api/platforms?key=86a34209259b4dd496f0989055c1711b')
+  fetch('https://api.rawg.io/api/platforms?key=95b06a32875746309437e49918c0c61a')
   .then(response => response.json())
   .then(data => {
       const platformsContainer = document.getElementById('platforms-container');
@@ -455,7 +457,7 @@ function displayFollowedPlatform() {
       // Parcourir les plateformes de la bibliothèque et les afficher dans la bibliothèque
       data.platforms.forEach(platform => {
         // Faites une requête à l'API Rawg.io pour obtenir les détails de la plateforme par son ID
-        fetch(`https://api.rawg.io/api/platforms/${platform.platform_id}?key=86a34209259b4dd496f0989055c1711b`)
+        fetch(`https://api.rawg.io/api/platforms/${platform.platform_id}?key=95b06a32875746309437e49918c0c61a`)
           .then(response => response.json())
           .then(platformDetails => {
             // Créer les éléments HTML pour afficher les détails de la plateforme
