@@ -406,8 +406,8 @@ def save_review():
 
         # Extraire les informations de l'avis
         game_id = review_data.get('game_id')
-        user_rating = review_data.get('user_rating')
-        user_comment = review_data.get('user_comment')
+        user_rating = review_data.get('rating')
+        user_comment = review_data.get('comment')
 
         sql_command = "INSERT INTO Reviews(game_id,user_id,comment,review_rating) VALUES(%s,%s,%s,%s);"
         cursor.execute(sql_command,(game_id,user_id,user_comment,user_rating,))
@@ -423,26 +423,23 @@ def save_review():
 @app.route("/delete_review", methods=['DELETE'])
 def delete_review():
     try:
-        
-        review_data = request.json
+        # Récupérer l'ID de l'utilisateur depuis la session
         user_id = session.get("user_id")
-        game_id = review_data.get('game_id')
+        game_id = request.json.get('game_id')
         sql_command = "CALL remove_review(%s,%s);"
-        cursor.execute(sql_command,(user_id,game_id,))
+        cursor.execute(sql_command, (user_id, game_id,))
         cnx.commit()
+
         if cursor.rowcount == 1:
-            flash("La platforme à bien été supprimé", category= 'success')
-            return render_template("home.html",profile = session)
+            flash("La critique a bien été supprimée", category='success')
         else:
-            flash("La platforme n'a pas été surpprimé de votre library", category= 'error')
-            return jsonify({"message":f"Le genre avec l'ID {game_id} n'a pas été supprimé de votre library"}),500
+            flash("La critique n'a pas été supprimée de votre library", category='error')
+        return render_template("home.html", profile=session)
         
     except mysql.connector.Error as err:
         print("Erreur MYSQL:", err)
-        return jsonify({"message": "Erreur dans la base de donnée"}), 500
+        return jsonify({"message": "Erreur dans la base de données"}), 500
 
-
-    
         
 
 
